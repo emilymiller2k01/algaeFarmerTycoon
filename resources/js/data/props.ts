@@ -1,6 +1,6 @@
-import { InfoBoxProps } from "@/components/InfoBox";
-import { LogProps } from "@/components/LogSection";
-import { ProductionProps } from "@/components/ProductionSection";
+import { InfoBoxProps } from "../Components/InfoBox";
+import { LogProps } from "../Components/LogSection";
+import { ProductionProps } from "../Components/ProductionSection";
 
 export const production: ProductionProps = {
     powerOutput: "MW 3",

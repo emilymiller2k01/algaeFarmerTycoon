@@ -1,10 +1,10 @@
 import React from 'react'
 import '../../css/app.css'
-import ExpansionsSection from '../components/ExpansionsSection'
-import FarmsSection from '../components/FarmsSection'
-import LogSection from '../components/LogSection'
-import MultiSection from '../components/MultiSection'
-import ProductionSection from '../components/ProductionSection'
+import ExpansionsSection from '../Components/ExpansionsSection'
+import FarmsSection from '../Components/FarmsSection'
+import LogSection from '../Components/LogSection'
+import MultiSection from '../Components/MultiSection'
+import ProductionSection from '../Components/ProductionSection'
 import { logs, production } from '../data/props'
 
 export default function Home() {
