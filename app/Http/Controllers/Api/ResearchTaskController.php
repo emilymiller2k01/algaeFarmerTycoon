@@ -12,6 +12,7 @@ class ResearchTaskController extends Controller
     {
         $completedTasks = ResearchTasks::where('completed', true)->get();
 
+        //TODO edit this so it renders them in the react
         return view('research-tasks.index', ['tasks' => $completedTasks]);
     }
 

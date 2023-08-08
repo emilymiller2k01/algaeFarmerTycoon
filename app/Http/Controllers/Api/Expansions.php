@@ -58,6 +58,8 @@ class Expansions extends Controller
                 // Associate the light with the selected farm
                 $selectedFarm->lights()->attach($selectedLight->id);
 
+                //TODO update this in the production window
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Light added successfully',
@@ -99,6 +101,8 @@ class Expansions extends Controller
             // Attach the refinery to the farm.
             $farm->refineries()->save($refinery);
 
+            //TODO show the refinery on the refinery widget in the farm
+
             return response()->json([
                 'success' => true,
                 'message' => 'Refinery added successfully',
@@ -126,6 +130,8 @@ class Expansions extends Controller
             $newFarm->mw = 0; // default value
 
             $game->farms()->save($newFarm);
+
+            //TODO show the new farm listed on the far selection pane
 
             return response()->json([
                 'success' => true,
@@ -156,6 +162,8 @@ class Expansions extends Controller
                 $tank->update(['nutrient_level' => 100]); // Assuming 100 is the maximum nutrient level
             });
 
+            //TODO make sure this is updated on the production window
+
             return response()->json([
                 'success' => true,
                 'message' => 'Nutrients maximized successfully',
@@ -180,6 +188,8 @@ class Expansions extends Controller
                 $tank->update(['co2_level' => 100]); // Assuming 100 is the maximum nutrient level
             });
 
+            //TODO make sure this is updated on the production window
+
             return response()->json([
                 'success' => true,
                 'message' => 'CO2 maximized successfully',
@@ -198,7 +208,7 @@ class Expansions extends Controller
             $farm = Farm::findOrFail($farm_id);
             $game = Game::findOrFail($game_id);
 
-            //TODO check if max number of tanks is met already - max=8
+            //TODO check if max number of tanks is met already - max=8 should have this as an attribute?
 
             // Create a new Tank instance
             $newTank = new Tank;
@@ -213,6 +223,8 @@ class Expansions extends Controller
 
             // Associate the new tank with the farm
             $newTank->save();
+
+            //TODO show new tank in the farm
 
             return response()->json([
                 'success' => true,
@@ -250,6 +262,8 @@ class Expansions extends Controller
             $game = $farm->game;
             $game->increment('money', $totalEarned);
 
+            //TODO show algae decrease, money increase and update all tank sliders
+
             return response()->json([
                 'success' => true,
                 'message' => 'Algae harvested successfully',
@@ -279,6 +293,8 @@ class Expansions extends Controller
                 $game->mw -= $energyCost;
                 $game->save();
 
+                //TODO get this to show on the production window
+
                 return response()->json([
                     'newTemperature' => $farm->temp,
                     'remainingMW' => $game->mw
@@ -306,6 +322,8 @@ class Expansions extends Controller
             // Increase the available energy
             $game->mw += $energyGain;
             $game->save();
+
+            //TODO get this to show on the production window
 
             return response()->json([
                 'newTemperature' => $farm->temp,

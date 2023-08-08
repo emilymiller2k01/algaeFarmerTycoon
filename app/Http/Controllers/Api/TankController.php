@@ -11,6 +11,8 @@ class TankController extends Controller
 {
     public function harvestAlgae($tank_id, $game_id, $farm_id){
         try {
+
+            //TODO make sure this shows on the algae growth bar dynamically
             // Retrieve the tank by its ID
             $game = Game::findOrFail($game_id);
             $farm = $game->farms->where('id', $farm_id)->first();

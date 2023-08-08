@@ -21,10 +21,13 @@ class Production extends Controller
         try {
             $game = Game::findOrFail($game_id);
 
+            //TODO make sure this dynamically shows on the window
             $currentMoney = $game->money;
 
+            //TODO make sure this dynamically shows on the production window
             $farms = $game->farms()->withCount('tanks')->get();
 
+            //TODO make sure this dynamically shows on the window
             $farmData = $farms->map(function ($farm) {
                 return [
                     'lux' => $farm->lux,
@@ -35,17 +38,21 @@ class Production extends Controller
                 ];
             });
 
+            //TODO make sure this dynamically shows on the window
             // Get the total number of farms associated with this game
             $totalFarms = $game->farms()->count();
 
+            //TODO make sure this dynamically shows on the window
             // Get the total number of tanks associated with all farms in this game
             $totalTanks = $farms->sum('tanks_count');
 
+            //TODO make sure this dynamically shows on the window
             // Get the total lux across all farms in this game
             $totalLux = $farms->sum(function ($farm) {
                 return $farm->lights->sum('lux');
             });
 
+            //TODO make sure this dynamically shows on the window
             $moneyPerSecond = $this->getAlgaeHarvestPerSecond($farms) *30;
 
             return response()->json([
@@ -75,6 +82,7 @@ class Production extends Controller
         //return collection that will be converted to a json for react
     }
 
+    //TODO make methods for all of these to show production per second
     private function getAlgaeHarvestPerSecond($farms){
         return 1;
     }

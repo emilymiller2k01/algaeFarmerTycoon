@@ -13,6 +13,7 @@ class ResearchTasks extends Model
         'task',
         'completed',
         'automation',
+        'cost',
         'mw',
     ];
 
