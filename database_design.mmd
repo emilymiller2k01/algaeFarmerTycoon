@@ -1,0 +1,59 @@
+classDiagram
+    class User
+    User : +Int userID
+    User : +String username
+    User : -String password
+
+    class Game
+    Game : +Int gameID
+    Game : ~Float money
+    Game : ~Float algae
+    Game : ~Float nutrients
+    Game : ~Float CO2
+    Game : ~Float temp
+    Game : ~Int maxFarms
+    Game : ~Int numFarms
+
+    class Achievement
+    Achievement : +List<string> achievement
+
+    class Farm
+    Farm : +Int NumTanks
+    Farm : +Int NumLights
+
+    class Events
+    Events : +List<String> events
+
+    class Refineries
+    Refineries : +String refinementType
+    Refineries : +Int maxRefineries
+    Refineries : +Int numRefineries
+
+    class Renewables{
+        <<enumeration>>
+        GAS
+        SOLAR
+        WIND
+    }
+
+    class Tank
+    Tank : +Int algaeMass
+    Tank : ~Int nutrientLevel
+    Tank : ~Int co2Level
+
+    class Lights{
+        <<enumeration>>
+        LED
+        FLORESCENT
+    }
+
+    User "1" -- "*" Game
+
+    Game "*" -- "*" Achievement
+    Game "1" -- "*" Farm
+    Game "1" -- "*" Events
+    Game "1" -- "*" Refineries
+    Game "1" -- "*" Renewables
+
+    Farm "1" -- "*" Lights
+    Farm "1" -- "*" Tank
