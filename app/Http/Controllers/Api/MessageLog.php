@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 class MessageLog extends Controller
 {
 
+    //TODO figure out wtf this does cos idk
     public function showLastest(){
         $messages = MessageLog::where('cleared', 0)->get();
         return response()->json([
@@ -16,6 +17,8 @@ class MessageLog extends Controller
         ]);
     }
 
+
+    //TODO make sure the new message pops up at the top of the list
     public function addMessage(Request $request) {
         $message = new MessageLog;
         $message->text = $request->input('text');
@@ -29,6 +32,7 @@ class MessageLog extends Controller
         ]);
     }
 
+    //TODO make sure all the messages are cleared from the window
     public function clearAll() {
         MessageLog::where('cleared', 0)->update(['cleared' => 1]);
 

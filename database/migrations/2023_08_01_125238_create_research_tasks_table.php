@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('task');
             $table->boolean('automation');
             $table->boolean('completed')->default(false);
+            $table->float('cost');
             $table->float('mw');
             $table->timestamps();
         });

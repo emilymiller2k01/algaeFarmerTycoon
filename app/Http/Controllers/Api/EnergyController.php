@@ -40,6 +40,7 @@ class EnergyController extends Controller
             // Assuming you have a pivot table or related table for this.
             $farm->powers()->attach($energy);
 
+            //TODO show this in the power widget
 
             return response()->json(['message' => 'Energy source purchased successfully']);
 
@@ -47,6 +48,59 @@ class EnergyController extends Controller
             return response()->json(['message' => 'Game or Farm Not Found'], 404);
         } catch (Exception $e) {
             return response()->json(['message' => 'Internal Server Error'], 500);
+        }
+    }
+
+
+    public function increaseMW($game_id) {
+        try {
+            $game = Game::findOrFail($game_id);
+
+            $cost = $game->mw_cost;
+            if ($game->money < $cost) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Insufficient funds'
+                ]);
+            }
+
+            $game->money -= $cost;
+            $game->mw += 1;  // You can change this value to adjust how much mw increases by
+            $game->save();
+
+            //TODO show this in the production window
+
+            return response()->json([
+                'success' => true,
+                'game mw' => $game->mw,
+                'message' => 'MW increased successfully'
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response("Game Not Found", 404);
+        } catch (Exception $e){
+            return response('Internal Server Error', 500);
+        }
+    }
+
+    public function decreaseMW($game_id) {
+        try {
+            $game = Game::findOrFail($game_id);
+
+            $game->mw -= 1;  // You can adjust this value as well
+            $game->money += $game->mw_cost; // Refund the cost (or a fraction if you wish)
+            $game->save();
+
+            //TODO show this in the production window
+
+            return response()->json([
+                'success' => true,
+                'game mw' => $game->mw,
+                'message' => 'MW decreased successfully'
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response("Game Not Found", 404);
+        } catch (Exception $e){
+            return response('Internal Server Error', 500);
         }
     }
 }

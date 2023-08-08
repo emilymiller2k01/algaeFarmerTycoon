@@ -16,6 +16,7 @@ class AutomationController extends Controller
             ['automation', true]
         ])->get();
 
+        //TODO get this to return the react component
         return view('research-tasks.automation', ['tasks' => $completedAutomationTasks]);
     }
 

@@ -10,10 +10,11 @@ class Achievement extends Model
     use HasFactory;
 
     protected $fillable = [
-        'achievements',
+        'achievement',
+        'completed',
     ];
 
     public function game(){
-        return $this->belongsToMany(User::class, 'user_achievements');
+        return $this->belongsToMany(User::class, 'user_achievements')->withTimestamps();
     }
 }

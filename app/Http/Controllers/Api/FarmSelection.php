@@ -43,6 +43,8 @@ class FarmSelection extends Controller
                 $game->selected_farm_id = $farm_id;
                 $game->save();
 
+                //TODO make sure these toggle buttons work
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Farm selected successfully',

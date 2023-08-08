@@ -35,11 +35,11 @@ Route::post('/game/{game_id}/farm/{farm_id}/tank/{tank_id}/harvestTank', [\App\H
 Route::post('/game/{game_id}/farm/{farm_id}/tank/{tank_id}/max-out-nutrients', [\App\Http\Controllers\Api\TankController::class, 'maxOutNutrients']);
 Route::post('/game/{game_id}/farm/{farm_id}/tank/{tank_id}/max-out-co2', [\App\Http\Controllers\Api\TankController::class, 'maxOutCO2']);
 Route::post('/game/{game_id}/select-farm', [App\Http\Controllers\Api\FarmSelection::class, 'selectFarm']);
-Route::patch('/game/{game_id}/farm/{farm_id}/refinery/{refinery_id}/produce', [App\Http\Controllers\AlgaeViewController::class, 'updateRefineryProduct']);
+Route::patch('/game/{game_id}/farm/{farm_id}/refinery/{refinery_id}/produce', [App\Http\Controllers\Api\RefineryController::class, 'updateRefineryProduct']);
 Route::patch('/game/{game_id}/farm/{farm_id}/increaseTemp', [Expansions::class, 'incrementTemperature']);
 Route::patch('/game/{game_id}/farm/{farm_id}/decreaseTemp', [Expansions::class, 'decrementTemperature']);
-Route::post('/game/{game_id}/increase-mw', [App\Http\Controllers\AlgaeViewController::class, 'increaseMW']);
-Route::post('/game/{game_id}/decrease-mw', [App\Http\Controllers\AlgaeViewController::class, 'decreaseMW']);
+Route::post('/game/{game_id}/increase-mw', [App\Http\Controllers\Api\EnergyController::class, 'increaseMW']);
+Route::post('/game/{game_id}/decrease-mw', [App\Http\Controllers\Api\EnergyController::class, 'decreaseMW']);
 Route::post('/game/{game_id}/farm/{farm_id}/purchaseEnergy', [EnergyController::class, 'purchaseEnergy']);
 Route::get('/research-tasks/completed', [ResearchTaskController::class, 'showCompletedTasks'])->name('research-tasks.completed');
 Route::post('/research-tasks/{taskId}/complete', [ResearchTaskController::class, 'completeTask'])->name('research-tasks.complete');
