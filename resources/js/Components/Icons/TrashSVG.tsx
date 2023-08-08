@@ -1,0 +1,12 @@
+import { ClassProps } from "./BubblesSVG";
+
+const TrashSVG = ({ className = "" }: ClassProps) => {
+    return (
+        <svg className={className} xmlns="http://www.w3.org/2000/svg" width="33" height="34" viewBox="0 0 33 34" fill="none">
+            <path d="M5.5 11.3333H27.5V29.75C27.5 30.5324 26.8844 31.1667 26.125 31.1667H6.875C6.11561 31.1667 5.5 30.5324 5.5 29.75V11.3333ZM8.25 14.1667V28.3333H24.75V14.1667H8.25ZM12.375 17H15.125V25.5H12.375V17ZM17.875 17H20.625V25.5H17.875V17ZM9.625 7.08333V4.24999C9.625 3.4676 10.2406 2.83333 11 2.83333H22C22.7594 2.83333 23.375 3.4676 23.375 4.24999V7.08333H30.25V9.91666H2.75V7.08333H9.625ZM12.375 5.66666V7.08333H20.625V5.66666H12.375Z" fill="#42FF00" />
+        </svg>
+
+    );
+}
+
+export default TrashSVG;
