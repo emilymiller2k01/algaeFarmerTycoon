@@ -42,4 +42,16 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function settings(){
+        return $this->belongsToMany(Settings::class, 'user_settings');
+    }
+
+    public function achievements(){
+        return $this->belongsToMany(Achievement::class, 'user_achievements');
+    }
+
+    public function games(){
+        return $this->hasMany(Game::class);
+    }
 }
