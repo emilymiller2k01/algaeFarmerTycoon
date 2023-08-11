@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('games', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->float('mw');
-            $table->decimal('money', 8, 2);
+            $table->float('mw')->default(0);
+            $table->decimal('money', 8, 2)->default(1000);
             $table->decimal('mw_cost', 8, 2)->default(0.00);
             $table->unsignedBigInteger('selected_farm_id')->nullable();
             $table->foreignId('user_id')->references('id')->on('users');

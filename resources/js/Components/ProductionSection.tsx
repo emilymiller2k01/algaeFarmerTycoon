@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import AlgaeSVG from "./Icons/AlgaeSVG"
 import BubblesSVG from "./Icons/BubblesSVG"
 import DarkTestTubeSVG from "./Icons/DarkTestTubeSVG"
@@ -9,7 +9,33 @@ import TempSVG from "./Icons/TempSVG"
 import TestTubeSVG from "./Icons/TestTubeSVG"
 import YellowBubblesSVG from "./Icons/YellowBubbles"
 
-const ProductionSection = (props: ProductionProps) => {
+type Game = {
+    id: number;
+    name: string;
+    user_id: number;
+    mw: string;
+    money: string;
+    mw_cost: string;
+    selected_farm_id: number;
+};
+
+const ProductionSection = ({ game }: ProductionProps) => {
+    const [productionData, setProductionData] = useState<ProductionData>({} as ProductionData);
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const response = await fetch(`/api/production/${productionData.gameId}`);
+                const data = await response.json();
+                if (data.success) {
+                    setProductionData(data);
+                }
+            } catch (error) {
+                console.error("There was an error fetching the production data:", error);
+            }
+        }
+        fetchData();
+    }, [game.id]);
+
     return (
         <div className="flex flex-col">
             <div className="flex px-8 py-6 bg-grey justify-between font-semibold">
@@ -17,7 +43,7 @@ const ProductionSection = (props: ProductionProps) => {
                     Production
                 </h1>
                 <h2 className="text-2xl text-green">
-                    {props.powerOutput}
+                    {game.mw}
                 </h2>
             </div>
             <div className="flex flex-col px-8 py-6 gap-4 font-semibold">
@@ -26,10 +52,10 @@ const ProductionSection = (props: ProductionProps) => {
                        $ Money
                     </p>
                     <p className="">
-                        {props.moneyAmount}
+                        {productionData.currentMoney  || 0}
                     </p>
                     <p>
-                        {props.moneyRate}
+                        {productionData.moneyRate}
                     </p>
                 </div>
                 <div className="flex justify-between text-xl text-yellow-dark">
@@ -37,10 +63,10 @@ const ProductionSection = (props: ProductionProps) => {
                        <AlgaeSVG className="inline-block -translate-y-[2px]" /> Algae
                     </p>
                     <p className="">
-                        {props.algaeAmount}
+                        {productionData.algaeAmount}
                     </p>
                     <p className="">
-                        {props.algaeRate}
+                        {productionData.algaeRate}
                     </p>
                 </div>
                 <div className="flex justify-between text-xl text-green-dark">
@@ -48,7 +74,7 @@ const ProductionSection = (props: ProductionProps) => {
                     <TankSVG className="inline-block -translate-y-[2px] p-[2px]" /> Tanks
                     </p>
                     <p className="">
-                        {props.tanks}
+                        {productionData.tanks}
                     </p>
                 </div>
                 <div className="flex justify-between text-xl text-yellow-dark">
@@ -56,7 +82,7 @@ const ProductionSection = (props: ProductionProps) => {
                     <FarmSVG className="inline-block -translate-y-[2px] p-[2px]" /> Farms
                     </p>
                     <p className="">
-                        {props.farms}
+                        {productionData.farms}
                     </p>
                 </div>
                 <div className="flex justify-between text-xl text-green-dark">
@@ -64,10 +90,10 @@ const ProductionSection = (props: ProductionProps) => {
                     <DarkTestTubeSVG className="inline-block -translate-y-[2px] p-[2px] stroke-green-dark" /> Nutrients
                     </p>
                     <p className="">
-                        {props.nutrientsAmount}
+                        {productionData.nutrientsAmount}
                     </p>
                     <p className="">
-                        {props.nutrientsRate}
+                        {productionData.nutrientsRate}
                     </p>
                 </div>
                 <div className="flex justify-between text-xl text-yellow-dark">
@@ -75,10 +101,10 @@ const ProductionSection = (props: ProductionProps) => {
                     <YellowBubblesSVG className="inline-block -translate-y-[2px] p-[2px]" /> CO2
                     </p>
                     <p className="">
-                        {props.co2Amount}
+                        {productionData.co2Amount}
                     </p>
                     <p className="">
-                        {props.co2Rate}
+                        {productionData.co2Rate}
                     </p>
                 </div>
                 <div className="flex justify-between text-xl text-green-dark">
@@ -86,7 +112,7 @@ const ProductionSection = (props: ProductionProps) => {
                     <TempSVG className="inline-block -translate-y-[2px]" /> Temperature
                     </p>
                     <p className="">
-                        {props.temperature}
+                        {productionData.temperature}
                     </p>
                 </div>
                 <div className="flex justify-between text-xl text-yellow-dark">
@@ -94,7 +120,7 @@ const ProductionSection = (props: ProductionProps) => {
                     <LightSVG className="inline-block -translate-y-[2px] p-[2px]" /> Light
                     </p>
                     <p className="">
-                        {props.light}
+                        {productionData.light}
                     </p>
                 </div>
 
@@ -104,11 +130,19 @@ const ProductionSection = (props: ProductionProps) => {
     )
 }
 
-export default ProductionSection
 
-export type ProductionProps = {
+
+export default ProductionSection;
+
+type ProductionData = {
+    success?: boolean;
+    currentMoney?: number;
+    farmData?: Array<any>; // or a more specific type if you have one
+    totalFarms?: number;
+    totalTanks?: number;
+    totalLux?: number;
+    gameId: number;
     powerOutput: string,
-    moneyAmount: string,
     moneyRate: string,
     algaeAmount: string,
     algaeRate: string,
@@ -120,4 +154,9 @@ export type ProductionProps = {
     co2Rate: string,
     temperature: string,
     light: string,
+};
+
+export type ProductionProps = {
+    game: Game;
+
 }

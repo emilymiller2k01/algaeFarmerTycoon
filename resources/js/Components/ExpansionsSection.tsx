@@ -1,5 +1,6 @@
 import React from 'react'
 import ExpansionButton from "./ExpansionButton"
+import { GameProps } from "../Pages/Game";
 
 const ExpansionsSection = (props: ExpansionsProps) => {
     return (
@@ -29,5 +30,6 @@ const ExpansionsSection = (props: ExpansionsProps) => {
 export default ExpansionsSection
 
 export type ExpansionsProps = {
-
+    game: GameProps;
 }
+

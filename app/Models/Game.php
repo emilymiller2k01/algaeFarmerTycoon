@@ -48,4 +48,6 @@ class Game extends Model
             return $farm->only('id');
         });
     }
+
+
 }

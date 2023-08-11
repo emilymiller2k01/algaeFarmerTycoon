@@ -8,6 +8,7 @@ import TankContainer from "./TankContainer";
 import PowerSection from "./PowerSection";
 import AutomationSection from "./AutomationSection";
 import RefineriesSection from "./RefineriesSection";
+import {GameProps} from "../Pages/Game";
 
 const MultiSection = (props: MultiProps) => {
     const [currentTab, setCurrentTab] = useState(0);
@@ -32,10 +33,10 @@ const MultiSection = (props: MultiProps) => {
                 //Farm
                 <div className=" py-4 h-full flex-grow flex flex-col bg-black">
                     <div className="flex flex-col gap-4 pb-20 px-4 flex-grow overflow-y-auto ">
-                        <PowerSection expanded />
-                        <TankContainer />
-                        <AutomationSection />
-                        <RefineriesSection />
+                        <PowerSection game={props.game} expanded />
+                        <TankContainer game={props.game} />
+                        <AutomationSection game={props.game} />
+                        <RefineriesSection game={props.game} />
                     </div>
 
                 </div>
@@ -76,4 +77,5 @@ const MultiSection = (props: MultiProps) => {
 export default MultiSection
 
 export type MultiProps = {
+    game: GameProps;
 }
