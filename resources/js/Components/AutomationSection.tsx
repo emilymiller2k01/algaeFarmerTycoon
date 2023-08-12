@@ -4,8 +4,11 @@ import BasketSVG from "./Icons/BasketSVG";
 import BubblesSVG from "./Icons/BubblesSVG";
 import TestTubeSVG from "./Icons/TestTubeSVG";
 import TrashSVG from "./Icons/TrashSVG";
+import {GameProps} from "../Pages/Game";
 
 const AutomationSection = (props: AutomationSectionProps) => {
+    const gameId = props.game.id;  // Extract game ID from the game prop
+
     return (
         <div className="px-4 pb-4 pt-2 border-2 border-green-dark rounded-[10px] bg-transparent">
             <h1 className="text-2xl text-green font-semibold pb-2">
@@ -44,6 +47,7 @@ const AutomationSection = (props: AutomationSectionProps) => {
 export default AutomationSection;
 
 export type AutomationSectionProps = {
+    game: GameProps;
     expanded?: boolean
     solar?: number
     wind?: number

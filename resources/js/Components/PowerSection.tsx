@@ -3,8 +3,10 @@ import GasSVG from "./Icons/GasSVG";
 import PowerSVG from "./Icons/PowerSVG";
 import SunSVG from "./Icons/SunSVG";
 import WindSVG from "./Icons/WindSVG";
+import {GameProps} from "../Pages/Game";
 
-const PowerSection = ({ expanded = false, wind = 0, solar = 0, gas = 0 }: PowerSectionProps) => {
+const PowerSection = ({ game, expanded = false, wind = 0, solar = 0, gas = 0 }: PowerSectionProps) => {
+
     return (
         <div className="p-4 flex border-2 border-green-dark rounded-[10px] gap-4 mr-auto">
             <div className="flex flex-col gap-4">
@@ -58,8 +60,10 @@ const PowerSection = ({ expanded = false, wind = 0, solar = 0, gas = 0 }: PowerS
 export default PowerSection;
 
 export type PowerSectionProps = {
-    expanded?: boolean
-    solar?: number
-    wind?: number
+    game: GameProps,
+    expanded?: boolean,
+    wind?: number,
+    solar?: number,
     gas?: number
 }
+

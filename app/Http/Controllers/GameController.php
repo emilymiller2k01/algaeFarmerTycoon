@@ -65,7 +65,7 @@ class GameController extends Controller
     //show a game
     public function show(Game $game){
         $this->authorize('view', $game);
-        return Inertia::render('Home', ['game' => $game]);
+        return Inertia::render('Game', ['game' => $game]);
     }
 
     //show the form for editing the game name
