@@ -9,8 +9,10 @@ use App\Models\Light;
 use App\Models\Refinery;
 use App\Models\Tank;
 use Exception;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Inertia\Inertia;
 
 class Expansions extends Controller
 {
@@ -31,7 +33,7 @@ class Expansions extends Controller
         }
     }
 
-    public function addLight(Request $request, $farm_id, $game_id) {
+    public function addLight(Request $request, $game_id, $farm_id) {
         try {
             $lightType = $request->input('lightType');
 
@@ -58,19 +60,10 @@ class Expansions extends Controller
                 // Associate the light with the selected farm
                 $selectedFarm->lights()->attach($selectedLight->id);
 
-                //TODO update this in the production window
-
-                return response()->json([
+                return Inertia::render('LightAdded', [
                     'success' => true,
                     'message' => 'Light added successfully',
-                    // any other data you want to return...
-                ]);
-            } else {
-                // Not enough money or MW, handle this situation
-                //TODO make a better else statment
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Light not added ',
+                    // ... [any other data you want to pass as props]
                 ]);
             }
         } catch (ModelNotFoundException $e){
@@ -80,64 +73,77 @@ class Expansions extends Controller
         }
     }
 
-    public function addRefinery(Request $request, $farm_id, $game_id){
+    public function addRefinery(Request $request, $game_id, $farm_id){
         try {
-            //TODO check if you can add a refinery
-
-            // Find the farm using the provided ID.
+            // Find the farm and the game using the provided IDs.
             $farm = Farm::findOrFail($farm_id);
             $game = Game::findOrFail($game_id);
 
+            // Define the cost of a refinery
+            $refineryCostMoney = 20;  // Example cost
+            $refineryCostMW = 3;      // Example MW requirement
+
+            if ($game->money < $refineryCostMoney && $game->mw < $refineryCostMW) {
+                $game->money = $game->money;
+            }
+
+            // Deduct the cost of the refinery from the player's resources
+            $game->money -= $refineryCostMoney;
+            $game->mw -= $refineryCostMW;
+            $game->save();
+
             // Create a new refinery.
             $refinery = new Refinery;
-            // Set any default or required values for your new refinery here.
             $refinery->produce = $request->input('produce');
             $refinery->mw = $request->input('mw');
-
-            //return $refinery;
-
-            //different mw depending on the product made
 
             // Attach the refinery to the farm.
             $farm->refineries()->save($refinery);
 
-            //TODO show the refinery on the refinery widget in the farm
+            return Inertia::location("/game/$game->id");
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Refinery added successfully',
+        } catch (ModelNotFoundException $e) {
+            return Inertia::render('Error', [
+                'message' => 'Resource Not Found',
+                'status' => 404
             ]);
-        } catch (ModelNotFoundException $e){
-            return response("Game Not Found", 404);
-        } catch (Exception $e){
-            return response('Internal Server Error', 500);
+        } catch (Exception $e) {
+            return Inertia::render('Error', [
+                'message' => 'Internal Server Error',
+                'status' => 500
+            ]);
         }
     }
+
 
     public function addFarm(Request $request, $game_id){
         try {
-
-            //TODO add an if statment for money etc
-            //need to figure out cost of a farm
-
             $game = Game::findOrFail($game_id);
+            $farms = $game->farms();
+
+            $farmCostMoney = 0;
+            $farmCostMW = 0;
+
+            if($game->money < $farmCostMoney && $game->mw < $farmCostMW) {
+                return Inertia::location("/game/$game->id");
+            }
+
+            $game->money -= $farmCostMoney;
+            $game->mw -= $farmCostMW;
 
             $newFarm = new Farm;
             $newFarm->game_id = $game_id;
-            $newFarm->total_biomass = 0; // default value
-            $newFarm->lux = 0; // default value
-            $newFarm->temp = 20; // default value, you can adjust it as per your game logic
-            $newFarm->mw = 0; // default value
 
             $game->farms()->save($newFarm);
+            $game->selected_farm_id = $newFarm->id;
 
-            //TODO show the new farm listed on the far selection pane
+            // Redirect to the Algae view of the new farm
+//            return Inertia::render("/game/{$game_id}/farm/{$newFarm->id}/addFarm");
+            //$farms = Farm::where('game_id', $game_id)->get();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Farm created successfully',
-                'farm' => $newFarm,
-            ]);
+
+            //return Inertia::location("/game/$game->id");
+
         } catch (ModelNotFoundException $e){
             return response("Game Not Found", 404);
         } catch (Exception $e){
@@ -145,95 +151,139 @@ class Expansions extends Controller
         }
     }
 
-    public function addFarmNutrients(Request $request, $farm_id, $game_id){
+    public function addFarmNutrients(Request $request, $game_id, $farm_id){
         try {
-
-            //TODO handle no money or already maxed nutrients
-
-            // Fetch the farm by its ID.
+            // Fetch the farm and game by their IDs.
             $farm = Farm::findOrFail($farm_id);
             $game = Game::findOrFail($game_id);
+
+            // Define cost to maximize nutrients for a tank
+            $nutrientCost = 50; // Example value
 
             // Fetch all tanks associated with the farm.
             $tanks = $farm->tanks;
 
-            // Iterate over each tank and update its nutrient level.
-            $tanks->each(function ($tank) {
+            // Check if the player has enough money to add nutrients to all tanks and if all tanks are not already maxed.
+            $totalCost = $nutrientCost * $tanks->where('nutrient_level', '<', 100)->count();
+            if ($game->money < $totalCost) {
+                $game->money = $game->money;
+            }
+
+            // If the player has enough money, deduct the cost.
+            $game->money -= $totalCost;
+            $game->save();
+
+            // Iterate over each tank and update its nutrient level if it's not already maxed.
+            $tanksToUpdate = $tanks->where('nutrient_level', '<', 100);
+            $tanksToUpdate->each(function ($tank) {
                 $tank->update(['nutrient_level' => 100]); // Assuming 100 is the maximum nutrient level
             });
 
-            //TODO make sure this is updated on the production window
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Nutrients maximized successfully',
+        } catch (ModelNotFoundException $e) {
+            return Inertia::render('Error', [
+                'message' => 'Resource Not Found',
+                'status' => 404
             ]);
-        } catch (ModelNotFoundException $e){
-            return response("Game Not Found", 404);
-        } catch (Exception $e){
-            return response('Internal Server Error', 500);
+        } catch (Exception $e) {
+            return Inertia::render('Error', [
+                'message' => 'Internal Server Error',
+                'status' => 500
+            ]);
         }
     }
 
-    public function addFarmCo2(Request $request, $farm_id, $game_id){
-        try {// Fetch the farm by its ID.
+
+    public function addFarmCo2(Request $request, $game_id, $farm_id){
+        try {
+
+            // Fetch the farm and game by their IDs.
             $farm = Farm::findOrFail($farm_id);
             $game = Game::findOrFail($game_id);
+
+
+            // Define cost to maximize CO2 for a tank.
+            $co2Cost = 50; // Example value
 
             // Fetch all tanks associated with the farm.
             $tanks = $farm->tanks;
 
-            // Iterate over each tank and update its nutrient level.
-            $tanks->each(function ($tank) {
-                $tank->update(['co2_level' => 100]); // Assuming 100 is the maximum nutrient level
+
+            // Check if the player has enough money to add CO2 to all tanks and if all tanks are not already maxed.
+            $totalCost = $co2Cost * $tanks->where('co2_level', '<', 100)->count();
+
+            if ($game->money < $totalCost) {
+
+                $game->money = $game->money;
+
+            }
+
+            // If the player has enough money, deduct the cost.
+            $game->money -= $totalCost;
+            $game->save();
+
+            // Iterate over each tank and update its CO2 level if it's not already maxed.
+            $tanksToUpdate = $tanks->where('co2_level', '<', 100);
+            $tanksToUpdate->each(function ($tank) {
+                $tank->update(['co2_level' => 100]); // Assuming 100 is the maximum CO2 level
             });
 
-            //TODO make sure this is updated on the production window
-
-            return response()->json([
-                'success' => true,
-                'message' => 'CO2 maximized successfully',
+        } catch (ModelNotFoundException $e) {
+            return Inertia::render('Error', [
+                'message' => 'Resource Not Found',
+                'status' => 404
             ]);
-        } catch (ModelNotFoundException $e){
-            return response("Game Not Found", 404);
-        } catch (Exception $e){
-            return response('Internal Server Error', 500);
+        } catch (Exception $e) {
+            return Inertia::render('Error', [
+                'message' => 'Internal Server Error',
+                'status' => 500
+            ]);
         }
     }
 
+
     public function addFarmTank(Request $request, $game_id, $farm_id)
     {
-
-        try {// Retrieve the farm by its ID
+        try {
+            // Retrieve the farm by its ID
             $farm = Farm::findOrFail($farm_id);
             $game = Game::findOrFail($game_id);
 
-            //TODO check if max number of tanks is met already - max=8 should have this as an attribute?
+            // Check if the farm already has the max number of tanks (8 in this case)
+            $currentTankCount = $farm->tanks->count();
+            if ($currentTankCount < 8) {
+                // Create a new Tank instance
+                $newTank = new Tank;
 
-            // Create a new Tank instance
-            $newTank = new Tank;
+                // Set properties of the tank
+                $newTank->farm_id = $farm_id;
+                $newTank->nutrient_level = 0;
+                $newTank->co2_level = 0;
+                $newTank->biomass = 0;
+                $newTank->mw = 0;
 
-            // Set properties of the tank from the request
-            $newTank->farm_id = $farm_id;
-            $newTank->nutrient_level = 0;//$request->input('nutrient_level');
-            $newTank->co2_level = 0;//$request->input('co2_level');
-            $newTank->biomass = 0;//$request->input('biomass');
-            $newTank->mw = 0;//$request->input('mw');
+                // Associate the new tank with the farm and save
+                $farm->tanks()->save($newTank);
 
+                // Get the updated list of tanks for the farm to show in the view
+            }
 
-            // Associate the new tank with the farm
-            $newTank->save();
+            $updatedTanks = $farm->tanks()->get();
+            //$game->refresh();
 
-            //TODO show new tank in the farm
+            // Render the Inertia view with the updated tanks list
+            //return Inertia::location("/game/$game->id");
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Tank added to farm successfully',
+        } catch (ModelNotFoundException $e) {
+            return Inertia::render('Error', [
+                'message' => 'Resource Not Found',
+                'status' => 404,
             ]);
-        } catch (ModelNotFoundException $e){
-            return response("Game Not Found", 404);
-        } catch (Exception $e){
-            return response('Internal Server Error', 500);
+        } catch (Exception $e) {
+            return Inertia::render('Error', [
+                'message' => 'Internal Server Error',
+                'status' => 500,
+            ]);
         }
     }
 
@@ -244,6 +294,9 @@ class Expansions extends Controller
 
             $totalHarvestedAlgae = 0;
             $totalEarned = 0;
+
+            // Collecting updated tanks to pass them to the front end
+            $updatedTanks = [];
 
             foreach ($tanks as $tank) {
                 $harvestedAlgae = $tank->biomass * 0.9; // 90% of the algae
@@ -256,29 +309,43 @@ class Expansions extends Controller
                 // Update tank biomass
                 $tank->biomass *= 0.1; // Remaining 10%
                 $tank->save();
+
+                // Add updated tank to the list
+                $updatedTanks[] = $tank;
             }
 
             // Add earnings to game money
             $game = $farm->game;
             $game->increment('money', $totalEarned);
 
-            //TODO show algae decrease, money increase and update all tank sliders
-
-            return response()->json([
+            // The frontend (Inertia view/component) will handle using the 'updatedTanks',
+            // 'totalEarned' and 'game.money' data to update the display.
+            return Inertia::render('AlgaeHarvested', [
                 'success' => true,
                 'message' => 'Algae harvested successfully',
                 'totalHarvestedAlgae' => $totalHarvestedAlgae,
                 'totalEarned' => $totalEarned,
+                'updatedTanks' => $updatedTanks,  // The updated tanks with new biomass values
+                'currentMoney' => $game->money    // The updated money after harvesting
             ]);
+
         } catch (ModelNotFoundException $e){
-            return response("Game Not Found", 404);
+            return Inertia::render('Error', [
+                'message' => 'Resource Not Found',
+                'status' => 404,
+            ]);
         } catch (Exception $e){
-            return response('Internal Server Error', 500);
+            return Inertia::render('Error', [
+                'message' => 'Internal Server Error',
+                'status' => 500,
+            ]);
         }
     }
 
+
     public function incrementTemperature(Request $request, $farm_id, $game_id) {
-        try{// Define the energy cost to increase the temperature
+        try{
+            // Define the energy cost to increase the temperature
             $energyCost = 0.5; // cost in mw
 
             $game = Game::findOrFail($game_id);
@@ -293,46 +360,64 @@ class Expansions extends Controller
                 $game->mw -= $energyCost;
                 $game->save();
 
-                //TODO get this to show on the production window
-
-                return response()->json([
+                // The frontend (Inertia view/component) will handle using the 'newTemperature'
+                // and 'remainingMW' data to update the production window.
+                return Inertia::render('TemperatureIncremented', [
                     'newTemperature' => $farm->temp,
                     'remainingMW' => $game->mw
                 ]);
+
             } else {
-                return response()->json([
-                    'error' => 'Not enough energy to increase temperature'
-                ], 400);
+                return Inertia::render('Error', [
+                    'message' => 'Not enough energy to increase temperature',
+                    'status' => 400
+                ]);
             }
         } catch (ModelNotFoundException $e){
-            return response("Game Not Found", 404);
+            return Inertia::render('Error', [
+                'message' => 'Resource Not Found',
+                'status' => 404,
+            ]);
         } catch (Exception $e){
-            return response('Internal Server Error', 500);
+            return Inertia::render('Error', [
+                'message' => 'Internal Server Error',
+                'status' => 500,
+            ]);
         }
     }
+
     public function decrementTemperature(Request $request, $farm_id, $game_id) {
-        try { // Energy regained by reducing the temperature
+        try {
+            // Energy regained by reducing the temperature
             $energyGain = 0.5; // gain in mw
 
             $game = Game::findOrFail($game_id);
             $farm = $game->farms->where('id', $farm_id)->first();
-            $farm->temp -= 1; // increase by 1 degree, adjust as needed
+            $farm->temp -= 1; // decrease by 1 degree, adjust as needed
             $farm->save();
 
             // Increase the available energy
             $game->mw += $energyGain;
             $game->save();
 
-            //TODO get this to show on the production window
-
-            return response()->json([
+            // The frontend (Inertia view/component) will handle using the 'newTemperature'
+            // and 'remainingMW' data to update the production window.
+            return Inertia::render('TemperatureDecremented', [
                 'newTemperature' => $farm->temp,
                 'remainingMW' => $game->mw
             ]);
-        } catch (ModelNotFoundException $e){
-            return response("Game Not Found", 404);
-        } catch (Exception $e){
-            return response('Internal Server Error', 500);
+
+        } catch (ModelNotFoundException $e) {
+            return Inertia::render('Error', [
+                'message' => 'Resource Not Found',
+                'status' => 404
+            ]);
+        } catch (Exception $e) {
+            return Inertia::render('Error', [
+                'message' => 'Internal Server Error',
+                'status' => 500
+            ]);
         }
     }
+
 }

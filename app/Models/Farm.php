@@ -82,4 +82,19 @@ class Farm extends Model
         });
     }
 
+    protected static function booted()
+    {
+        static::created(function ($farm) {
+            // Create a new tank when a farm is created
+            $tank = new Tank([
+                // Fill in any default values or necessary fields for the Tank
+                'nutrient_level' => 0,
+                'co2_level' => 0,
+                'biomass' => 0,
+                'mw' => 0,
+            ]);
+            $farm->tanks()->save($tank);
+        });
+    }
+
 }

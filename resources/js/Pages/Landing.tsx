@@ -1,6 +1,6 @@
 import React from 'react'
 import '../../css/app.css'
-//import { InertiaLink } from '@inertiajs/inertia-react';
+import { InertiaLink } from '@inertiajs/inertia-react';
 
 const Landing = ({ auth }) => {
     return (

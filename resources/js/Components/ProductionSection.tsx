@@ -21,10 +21,15 @@ type Game = {
 
 const ProductionSection = ({ game }: ProductionProps) => {
     const [productionData, setProductionData] = useState<ProductionData>({} as ProductionData);
+
+    console.log(productionData);
+
+    console.log(game.mw, productionData.currentMoney, productionData.moneyRate, productionData.algaeAmount, productionData.algaeRate)
+
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await fetch(`/api/production/${productionData.gameId}`);
+                const response = await fetch(`/game/${game.id}/production`);
                 const data = await response.json();
                 if (data.success) {
                     setProductionData(data);
@@ -33,7 +38,14 @@ const ProductionSection = ({ game }: ProductionProps) => {
                 console.error("There was an error fetching the production data:", error);
             }
         }
+
         fetchData();
+        // Set up polling every 5 seconds (or any other desired interval)
+        const intervalId = setInterval(fetchData, 500);
+
+        // Cleanup function to clear the interval when the component is unmounted
+        return () => clearInterval(intervalId);
+
     }, [game.id]);
 
     return (
@@ -43,7 +55,7 @@ const ProductionSection = ({ game }: ProductionProps) => {
                     Production
                 </h1>
                 <h2 className="text-2xl text-green">
-                    {game.mw}
+                    MW {game.mw}
                 </h2>
             </div>
             <div className="flex flex-col px-8 py-6 gap-4 font-semibold">

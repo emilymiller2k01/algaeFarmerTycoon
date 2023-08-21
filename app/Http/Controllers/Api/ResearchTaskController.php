@@ -8,21 +8,24 @@ use Illuminate\Http\Request;
 
 class ResearchTaskController extends Controller
 {
-    public function showCompletedTasks()
+    public function showCompletedTasks($gameId)
     {
-        $completedTasks = ResearchTasks::where('completed', true)->get();
-
-        //TODO edit this so it renders them in the react
-        return view('research-tasks.index', ['tasks' => $completedTasks]);
+        $completedTasks = ResearchTasks::where('game_id', $gameId)
+            ->where('completed', true)
+            ->get();
+        return response()->json($completedTasks);
     }
 
-    public function completeTask(Request $request, $taskId)
+    public function showCompletedAutomationTasks($gameId)
     {
-        $task = ResearchTasks::findOrFail($taskId);
-
-        $task->completed = true;
-        $task->save();
-
-        return redirect()->route('research-tasks.completed');
+        // Fetch tasks that are completed and automated
+        $completedAutomationTasks = ResearchTasks::where('game_id', $gameId)
+            ->where('completed', true)
+            ->where('automation', true)
+            ->get();
+        return response()->json($completedAutomationTasks);
     }
+
+
+
 }

@@ -7,6 +7,7 @@ use App\Models\Game;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class FarmSelection extends Controller
 {
@@ -42,19 +43,50 @@ class FarmSelection extends Controller
                 // Store the selected farm ID in the game record
                 $game->selected_farm_id = $farm_id;
                 $game->save();
+                $game->refresh();
 
                 //TODO make sure these toggle buttons work
+//                return Inertia::render('Game', [
+//                    'success' => true,
+//                    'game' => $game,
+//                    'selected_farm_id' => $game->selected_farm_id,
+//                ]);
 
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Farm selected successfully',
-                ]);
+                return Inertia::location("/game/$game->id");
+
+
             } else {
+                return Inertia::render('MultiSection', [
+                    'success' => false,
+                    'message' => 'Farm selected unsuccessfully',
+                ]);
+            }
+        } catch (ModelNotFoundException $e) {
+            return response("Game Not Found", 404);
+        } catch (Exception $e) {
+            return response('Internal Server Error', 500);
+        }
+    }
+
+    public function tanksForSelectedFarm($game_id) {
+        try {
+            $game = Game::findOrFail($game_id);
+
+            $farm = $game->farms->where('id', $game->selected_farm_id)->first();
+
+            if (!$farm) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'This farm does not belong to the specified game',
-                ], 400);
+                    'message' => 'Selected farm not found for this game',
+                ], 404);
             }
+
+            $tanks = $farm->tanks;
+
+            return response()->json([
+                'success' => true,
+                'tanks' => $tanks,
+            ]);
         } catch (ModelNotFoundException $e) {
             return response("Game Not Found", 404);
         } catch (Exception $e) {

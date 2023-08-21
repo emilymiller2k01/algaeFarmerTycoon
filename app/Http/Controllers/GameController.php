@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Farm;
 use App\Models\Game;
+use App\Models\Tank;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+
 
 class GameController extends Controller
 {
@@ -57,15 +60,38 @@ class GameController extends Controller
         $game->mw = 0;
         $game->save();
 
+        // Create a farm associated with this game
+        $farm = new Farm;
+        $farm = $game->farms()->create([
+
+        ]);
+
+
+        // Set the newly created farm as the selected_farm_id for the game
+        $game->selected_farm_id = $farm->id;
+
+        $luxValue = $game->selectedFarm->lux;
+
+        $game->production()->create([
+            'farmLight' => $luxValue,
+        ]);
+
+
+        $farm->save();
+
+        $game->save();
+
         // Return a response or redirect
         return redirect()->route('games.show', ['game' => $game->id]);
     }
 
 
+
     //show a game
     public function show(Game $game){
         $this->authorize('view', $game);
-        return Inertia::render('Game', ['game' => $game]);
+
+        return Inertia::render('Game', ['initialGame' => $game, 'tanks' => $game->selectedFarm->tanks, 'farms' => $game->farms]);
     }
 
     //show the form for editing the game name

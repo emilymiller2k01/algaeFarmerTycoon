@@ -1,7 +1,7 @@
 // @ts-ignore
 import { Head } from '@inertiajs/react';
 import React, { useState } from "react";
-import {Inertia} from "@inertiajs/inertia";
+import {router} from "@inertiajs/react";
 
 export default function Dashboard({ auth, games }) {
     const [gameName, setGameName] = useState(''); // State to store the game name
@@ -20,7 +20,7 @@ export default function Dashboard({ auth, games }) {
         }
 
 
-        Inertia.post('/game', {
+        router.post('/game', {
             user_id: auth.id,
             name: gameName
         });

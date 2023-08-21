@@ -16,44 +16,32 @@ class Production extends Controller
     //
 
     public function index($game_id){
-
-
         try {
             $game = Game::findOrFail($game_id);
-
-            //TODO make sure this dynamically shows on the window
             $currentMoney = $game->money;
 
-            //TODO make sure this dynamically shows on the production window
             $farms = $game->farms()->withCount('tanks')->get();
 
-            //TODO make sure this dynamically shows on the window
             $farmData = $farms->map(function ($farm) {
                 return [
                     'lux' => $farm->lux,
-                    'temperature' => $farm->temperature,
+                    'temperature' => $farm->temperature, // Assuming each farm has a temperature
                     'mw' => $farm->mw,
                     'tanks_count' => $farm->tanks->count(),
                     'total_lux' => $farm->lights->sum('lux'),
                 ];
             });
 
-            //TODO make sure this dynamically shows on the window
-            // Get the total number of farms associated with this game
             $totalFarms = $game->farms()->count();
-
-            //TODO make sure this dynamically shows on the window
-            // Get the total number of tanks associated with all farms in this game
             $totalTanks = $farms->sum('tanks_count');
-
-            //TODO make sure this dynamically shows on the window
-            // Get the total lux across all farms in this game
             $totalLux = $farms->sum(function ($farm) {
                 return $farm->lights->sum('lux');
             });
 
-            //TODO make sure this dynamically shows on the window
-            $moneyPerSecond = $this->getAlgaeHarvestPerSecond($farms) *30;
+            $moneyPerSecond = $this->getMoneyPerSecond($farms);
+            $algaeProduction = $this->getAlgaeHarvestPerSecond($farms);
+            $nutrientLoss = $this->getNutrientLoss($farms);
+            $temperature = $this->calculateTemperature($farms);
 
             return response()->json([
                 'success' => true,
@@ -63,27 +51,38 @@ class Production extends Controller
                 'totalFarms' => $totalFarms,
                 'totalTanks' => $totalTanks,
                 'totalLux' => $totalLux,
+                'algaeProduction' => $algaeProduction,
+                'nutrientLoss' => $nutrientLoss,
+                'temperature' => $temperature
             ]);
 
         } catch (ModelNotFoundException $e) {
             return response("Game Not Found", 404);
-        } catch (Exception $e){
+        } catch (Exception $e) {
             return response('Internal Server Error', 500);
         }
-
-        //need to calculate how money is calculated here (variable)
-
-        //need to calculate how much algae is being produced (sum up all tank production)
-
-        //need to calculate nutrient loss (sum up all tank useage, need to be able to add to the things)
-
-        //need to calculate temperature (variable)
-
-        //return collection that will be converted to a json for react
     }
 
-    //TODO make methods for all of these to show production per second
-    private function getAlgaeHarvestPerSecond($farms){
-        return 1;
-    }
+        private function getMoneyPerSecond($farms) {
+            // Assuming each farm produces a fixed amount of money.
+            $moneyFromFarms = $farms->count() * 10; // 10 is a placeholder value
+            return $moneyFromFarms;
+        }
+
+        private function getAlgaeHarvestPerSecond($farms){
+            // Assuming each farm produces a fixed amount of algae.
+            $algaeFromFarms = $farms->count() * 5; // 5 is a placeholder value
+            return $algaeFromFarms;
+        }
+
+        private function getNutrientLoss($farms){
+            // Assuming each farm uses a fixed amount of nutrients.
+            $nutrientLossFromFarms = $farms->count() * 3; // 3 is a placeholder value
+            return $nutrientLossFromFarms;
+        }
+
+        private function calculateTemperature($farms) {
+            // Assuming temperature increases with the number of farms.
+            return 20 + ($farms->count() * 2); // 20 is a base temperature, 2 is a placeholder increment value
+        }
 }

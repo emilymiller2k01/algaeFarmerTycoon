@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+
+
 class Game extends Model
 {
     use HasFactory;
@@ -17,10 +19,15 @@ class Game extends Model
         'user_id',
         'selected_farm_id',
 
+
     ];
 
     public function farms(){
         return $this->hasMany(Farm::class);
+    }
+
+    public function production(){
+        return $this->hasOne(Production::class);
     }
 
     public function selectedFarm()
