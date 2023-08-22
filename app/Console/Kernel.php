@@ -10,12 +10,11 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      */
-    protected function schedule(Schedule $schedule): void
+    protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
-        $schedule->command('game:update-state')->everyMinute();
-        // Laravel doesn't support everySecond out of the box.
+        $schedule->command('app:update-game-state')->everySecond();
     }
+
 
     /**
      * Register the commands for the application.

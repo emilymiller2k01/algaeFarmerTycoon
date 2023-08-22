@@ -13,9 +13,8 @@
       "resolveJsonModule": true,
       "isolatedModules": true,
       "jsx": "react",
-      
+
     },
-    "include": ["resources/js/**/*"],
+    "include": ["resources/js/**/*", "types/**/*"],
     "exclude": ["node_modules"]
   }
-  

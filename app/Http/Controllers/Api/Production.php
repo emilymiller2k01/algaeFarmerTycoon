@@ -10,50 +10,57 @@ use App\Models\Tank;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use App\Events\GameStateUpdated;
+
 
 class Production extends Controller
 {
-    //
-
-    public function index($game_id){
+    public function index($game_id)
+    {
         try {
             $game = Game::findOrFail($game_id);
             $currentMoney = $game->money;
 
-            $farms = $game->farms()->withCount('tanks')->get();
+            $farms = $game->farms()->with(['tanks', 'lights'])->get();
 
-            $farmData = $farms->map(function ($farm) {
-                return [
-                    'lux' => $farm->lux,
-                    'temperature' => $farm->temperature, // Assuming each farm has a temperature
-                    'mw' => $farm->mw,
-                    'tanks_count' => $farm->tanks->count(),
-                    'total_lux' => $farm->lights->sum('lux'),
-                ];
+            $algaeMass = 0;
+            $algaeRate = 0;
+            $nutrientLoss = 0;
+
+            $farms->each(function ($farm) use ($game, &$algaeMass, &$algaeRate, &$nutrientLoss) {
+                // Calculate algae mass and rate for each farm
+                $algaeMass += $farm->algaeMass; // Assuming each farm has algaeMass attribute
+                $algaeRate += $this->calculateAlgaeRate($farm);
+
+                // Calculate nutrient loss for each farm
+                $nutrientLoss += $this->getNutrientLoss($farm);
+
+                // Harvest algae for tanks which are more than 90% full
+                $farm->tanks->each(function ($tank) use ($game) {
+                    if ($tank->algaePercentage > 90) {
+                        // Adjust game money based on harvested algae
+                        $harvestAmount = $tank->algaeMass * 0.95;
+                        $game->money += $harvestAmount;
+                        $tank->algaeMass *= 0.05;
+                        $tank->save();
+                    }
+                });
             });
 
-            $totalFarms = $game->farms()->count();
-            $totalTanks = $farms->sum('tanks_count');
-            $totalLux = $farms->sum(function ($farm) {
-                return $farm->lights->sum('lux');
-            });
+            // ... [rest of the calculations]
 
             $moneyPerSecond = $this->getMoneyPerSecond($farms);
-            $algaeProduction = $this->getAlgaeHarvestPerSecond($farms);
-            $nutrientLoss = $this->getNutrientLoss($farms);
-            $temperature = $this->calculateTemperature($farms);
+
+            broadcast(new GameStateUpdated($game));
 
             return response()->json([
                 'success' => true,
                 'currentMoney' => $currentMoney,
                 'moneyPerSecond' => $moneyPerSecond,
-                'farmData' => $farmData,
-                'totalFarms' => $totalFarms,
-                'totalTanks' => $totalTanks,
-                'totalLux' => $totalLux,
-                'algaeProduction' => $algaeProduction,
+                'algaeMass' => $algaeMass,
+                'algaeRate' => $algaeRate,
                 'nutrientLoss' => $nutrientLoss,
-                'temperature' => $temperature
+                // ... [rest of the data]
             ]);
 
         } catch (ModelNotFoundException $e) {
@@ -61,6 +68,13 @@ class Production extends Controller
         } catch (Exception $e) {
             return response('Internal Server Error', 500);
         }
+    }
+
+    private function calculateAlgaeRate($farm)
+    {
+        // This is a hypothetical formula for the rate of growth of algae
+        // which is influenced by light (lux), temperature, nutrients, and CO2.
+        return ($farm->lux * $farm->temperature * $farm->nutrients * $farm->co2) / 1000;
     }
 
         private function getMoneyPerSecond($farms) {

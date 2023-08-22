@@ -32,6 +32,24 @@ class GameStateUpdated implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('games');
+        return new PrivateChannel('games.' . $this->game->id);
+    }
+
+    public function broadcastWith()
+    {
+        // Only sending relevant game data, you can adjust as needed
+        return [
+            'id' => $this->game->id,
+            'name' => $this->game->name,
+            // ... other relevant fields
+        ];
+    }
+
+    /**
+     * Customize the broadcast name.
+     */
+    public function broadcastAs()
+    {
+        return 'game.state.updated';
     }
 }

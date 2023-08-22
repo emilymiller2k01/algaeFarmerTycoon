@@ -9,6 +9,10 @@ class Production extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'farmLight',
+    ];
+
     public function game(){
         return $this->belongsTo(Game::class);
     }

@@ -9,9 +9,8 @@ const ExpansionButton = (props: ExpansionButtonProps) => {
             border: '1px solid limegreen',
             borderRadius: '8px',
             backgroundColor: 'black',
-            boxShadow: 'red',
             color: 'limegreen',
-            backdropFilter: 'none'
+            //backdropFilter: 'none'
         }}>
             <div>{props.description}</div>
             <hr style={{ borderColor: 'limegreen' }} />
@@ -24,12 +23,8 @@ const ExpansionButton = (props: ExpansionButtonProps) => {
     return (
         <Tooltip title={tooltipContent} arrow sx={{
             "& .MuiTooltip-tooltip": {
-                backgroundColor: 'black',
-                color: 'limegreen',
-                fontSize: '0.8rem',
-                borderRadius: '8px',
-                backdropFilter: 'none'
-
+                padding: 0, // Reset padding
+                backgroundColor: 'transparent',
             },
             "& .MuiTooltip-arrow": {
                 color: 'black'
