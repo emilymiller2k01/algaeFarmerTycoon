@@ -1,45 +1,42 @@
 import React from 'react';
-import Tooltip from '@mui/material/Tooltip';
+import { Tooltip, Text } from '@mantine/core';
 
 const ExpansionButton = (props: ExpansionButtonProps) => {
-
     const tooltipContent = (
-        <div style={{
-            padding: '8px',
-            border: '1px solid limegreen',
-            borderRadius: '8px',
-            backgroundColor: 'black',
-            color: 'limegreen',
-            //backdropFilter: 'none'
-        }}>
-            <div>{props.description}</div>
-            <hr style={{ borderColor: 'limegreen' }} />
-            <div>Costs: {props.costs}</div>
-            <hr style={{ borderColor: 'limegreen' }} />
-            <div>Benefits: {props.benefits}</div>
+        <div style={{ maxWidth: '200px' }}>
+            <Text align="center">{props.description}</Text>
+            <hr />
+            <Text align="center">{props.costs}</Text>
+            <hr />
+            <Text align="center">{props.benefits}</Text>
         </div>
     );
 
     return (
-        <Tooltip title={tooltipContent} arrow sx={{
-            "& .MuiTooltip-tooltip": {
-                padding: 0, // Reset padding
-                backgroundColor: 'transparent',
-            },
-            "& .MuiTooltip-arrow": {
-                color: 'black'
-            }
-        }}>
+        <Tooltip content={tooltipContent} withArrow placement="top">
             <button
-                className="flex flex-col items-center justify-center text-green-dark hover:text-green rounded-md"
-                onClick={props.onClick}>
-                <h1 className="text-2xl text-center p-2">
+                style={{
+                    background: 'black',
+                    color: 'limegreen',
+                    borderRadius: '10px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'color 0.2s',
+                    padding: '10px 15px',
+                }}
+                onClick={props.onClick}
+                onMouseOver={() => (document.body.style.cursor = 'pointer')}
+                onMouseOut={() => (document.body.style.cursor = 'default')}
+            >
+                <h1 style={{ fontSize: '1.5rem', margin: '5px 0' }}>
                     {props.title}
                 </h1>
             </button>
         </Tooltip>
     );
-}
+};
 
 export default ExpansionButton;
 
@@ -49,4 +46,4 @@ export type ExpansionButtonProps = {
     description: string;
     costs: string;
     benefits: string;
-}
+};

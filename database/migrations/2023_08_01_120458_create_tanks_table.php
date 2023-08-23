@@ -17,6 +17,7 @@ return new class extends Migration
             $table->float('nutrient_level')->default(100);
             $table->float('co2_level')->default(100);
             $table->float('biomass')->default(5);
+            $table->float('capacity')->default(1000);
             $table->float('mw')->default(1);
             $table->timestamps();
         });

@@ -33,17 +33,45 @@ export type Farm = {
     mw: number;
 }
 
-type HomeProps = {
+
+type ProductionData = {
+    success?: boolean;
+    currentMoney?: number;
+    farmData?: Array<any>;
+    totalFarms?: number;
+    totalTanks?: number;
+    totalLux?: number;
+    gameId: number;
+    powerOutput: string,
+    moneyRate: string,
+    algaeAmount: string,
+    algaeRate: string,
+    algaeMass: number,
+    algaeHarvest: number,
+    tanks: string,
+    farms: string,
+    nutrientsAmount: string,
+    nutrientsRate: string,
+    nutrientLoss: number,
+    co2Amount: string,
+    co2Rate: string,
+    temperature: string,
+    light: string,
+    lux: number,
+};
+
+export type HomeProps = {
     initialGame: GameProps;
     tanks: Tank[];
     farms: Farm[];
+    productionData: ProductionData
 }
 
 function Home ({initialGame, tanks, farms}: HomeProps){
 
     const [game, setGame] = useState(initialGame);
     console.log(tanks)
-    console.log("famrs:", farms)
+    console.log("farms:", farms)
 
     // This function will be passed to FarmSection to update the selected_farm_id
     const updateSelectedFarmId = (newId) => {
@@ -56,7 +84,7 @@ function Home ({initialGame, tanks, farms}: HomeProps){
             <div className="flex w-full min-h-full">
                 <div className="flex flex-col w-1/4 h-full">
                     <div className="h-[60vh]">
-                        <ProductionSection game={game} {...production} />
+                        <ProductionSection />
                     </div>
                     <div className="h-[40vh]">
                         <ExpansionsSection game={game} />

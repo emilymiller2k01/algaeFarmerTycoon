@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\getProductionData;
 
 
 class GameController extends Controller
@@ -91,7 +92,15 @@ class GameController extends Controller
     public function show(Game $game){
         $this->authorize('view', $game);
 
-        return Inertia::render('Game', ['initialGame' => $game, 'tanks' => $game->selectedFarm ? $game->selectedFarm->tanks : [], 'farms' => $game->farms]);
+        // Collect all your production data
+
+
+        return Inertia::render('Game', [
+            'initialGame' => $game,
+            'tanks' => $game->selectedFarm ? $game->selectedFarm->tanks : [],
+            'farms' => $game->farms,
+            'productionData' => getProductionData($game) // Send prod data to frontend here
+        ]);
     }
 
     //show the form for editing the game name
