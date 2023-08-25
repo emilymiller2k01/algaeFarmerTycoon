@@ -10,6 +10,8 @@ class ResearchTasks extends Model
     use HasFactory;
 
     protected $fillable = [
+        'game_id',
+        'title',
         'task',
         'completed',
         'automation',
@@ -18,6 +20,6 @@ class ResearchTasks extends Model
     ];
 
     public function games(){
-        return $this->belongsToMany(Game::class, 'game_research_tasks');
+        return $this->belongsTo(Game::class);
     }
 }

@@ -2,17 +2,21 @@ import React, {useState} from 'react'
 import ExpansionButton from "./ExpansionButton"
 import game, { GameProps } from "../Pages/Game";
 import { InertiaLink } from '@inertiajs/inertia-react'
-import {router} from "@inertiajs/react";
 import axios from "axios";
+import { HomeProps } from '../Pages/Game'
+import { router, usePage } from '@inertiajs/react'
 
-const ExpansionsSection = (props: ExpansionsProps) => {
+
+const ExpansionsSection = () => {
+
+    const { productionData, initialGame } = usePage<HomeProps>().props
 
     //const hasResearchedRefinery = props.game.id.researchTasks.some(task => task.name === "Refinery");
     const [tanks, setTanks] = useState([]);
 
 
     const addFarm = () => {
-        router.post(`/game/${props.game.id}/farm/${props.game.selected_farm_id}/addFarm`, {}, {
+        router.post(`/game/${initialGame.id}/farm/${initialGame.selected_farm_id}/addFarm`, {}, {
             onSuccess: () => {
                 router.reload({ only: ['MultiSection', 'FarmSelection'] });
             }})
@@ -20,7 +24,7 @@ const ExpansionsSection = (props: ExpansionsProps) => {
     };
 
     const addLight = (lightType: string) => {
-        router.post(`/game/${props.game.id}/farm/${props.game.selected_farm_id}/light}`, {
+        router.post(`/game/${initialGame.id}/farm/${initialGame.selected_farm_id}/light`, {
             lightType: lightType, // assuming the title is the type of light you want to add
         }, {
             onSuccess: () => {
@@ -30,16 +34,16 @@ const ExpansionsSection = (props: ExpansionsProps) => {
     };
 
     const addFarmCo2 = () => {
-        router.post(`/game/${props.game.id}/farm/${props.game.selected_farm_id}/farmCo2`, {});
+        router.post(`/game/${initialGame.id}/farm/${initialGame.selected_farm_id}/farmCo2`, {});
     };
 
     const addFarmNutrients = () => {
-        router.post(`/game/${props.game.id}/farm/${props.game.selected_farm_id}/farmNutrients`, {});
+        router.post(`/game/${initialGame.id}/farm/${initialGame.selected_farm_id}/farmNutrients`, {});
     };
 
 
     const addFarmTank = () => {
-        router.post(`/game/${props.game.id}/farm/${props.game.selected_farm_id}/addTank`, {},{
+        router.post(`/game/${initialGame.id}/farm/${initialGame.selected_farm_id}/addTank`, {},{
             onSuccess: () => {
                 // Refresh only the parts of your UI you need to. In this case, we're assuming you have a 'TankSection'.
                 router.reload({ only: ['TankContainer'] });
@@ -47,8 +51,25 @@ const ExpansionsSection = (props: ExpansionsProps) => {
         });
     }
 
+    const harvestFarmAlgae = () => {
+        router.get(`/game/${initialGame.id}/farm/${initialGame.selected_farm_id}/harvestAlgae`, {},{
+            onSuccess: () => {
+                // Refresh only the parts of your UI you need to. In this case, we're assuming you have a 'TankSection'.
+                router.reload({ only: ['MultiSection', 'ProductionSection'] });
+            }
+        });
+    }
+
     const addFarmRefinery = () => {
-        router.post(`/game/${props.game.id}/farm/${props.game.selected_farm_id}/refinery`, {});
+        router.post(`/game/${initialGame.id}/farm/${initialGame.selected_farm_id}/refinery`, {});
+    };
+
+    const increaseTemp = () => {
+        router.patch(`/game/${initialGame.id}/farm/${initialGame.selected_farm_id}/increaseTemp`, {});
+    };
+
+    const decreaseTemp = () => {
+        router.patch(`/game/${initialGame.id}/farm/${initialGame.selected_farm_id}/decreaseTemp`, {});
     };
 
     return (
@@ -60,22 +81,17 @@ const ExpansionsSection = (props: ExpansionsProps) => {
             </div>
             <div className="flex flex-grow flex-col overflow-y-scroll">
                 <div className="grid grid-cols-2 gap-y-[10px] gap-x-4 p-4">
-                    <ExpansionButton title={"Florescent"} onClick={() => { addLight("Florescent")}}/>
-                    <ExpansionButton title={"LED"} onClick={() => { addLight("LED") }}/>
+                    <ExpansionButton title={"Florescent"} onClick={() => { addLight("florescent")}} description='Florescent light is less expensive but provides fewer Lux and requires more MW.' costs={'Money: 10\nMW: 1'} benefits='Lux: +10'/>
+                    <ExpansionButton title={"LED"} onClick={() => { addLight("led") }} description='LED light is more expensive but provides more Lux and requires less MW.' costs='Money: 20 MW: 0.5' benefits='Lux: +20'/>
                     {/*{props.game.researchedRefineries &&*/}
-                    <ExpansionButton title={"Refinery"} onClick={() => { addFarmRefinery() }}/>
-                    <ExpansionButton title={"Farm"} onClick={() => { addFarm() }}/>
-                    <ExpansionButton title={"CO2"} onClick={() => { addFarmCo2() }}/>
-                    <ExpansionButton title={"Nutrients"} onClick={() => { addFarmNutrients() }}/>
-                    <ExpansionButton title={"Tank"} onClick={() => { addFarmTank() }}/>
-                </div>
-                <div className="flex justify-between p-4">
-                    <InertiaLink href={`/decrementTemperature/${props.game.selected_farm_id}/${props.game.id}`} className="px-4 py-2 bg-red-600 text-white rounded-lg">
-                        Decrease Temperature
-                    </InertiaLink>
-                    <InertiaLink href={`/incrementTemperature/${props.game.selected_farm_id}/${props.game.id}`} className="px-4 py-2 bg-green-600 text-white rounded-lg">
-                        Increase Temperature
-                    </InertiaLink>
+                    <ExpansionButton title={"Refinery"} onClick={() => { addFarmRefinery() }} description='Refineries process algae to make byproducts, which increase the profit per kg of algae' costs='Money: 200 MW: 2' benefits='+$50 per kg of algae harvested.'/>
+                    <ExpansionButton title={"Farm"} onClick={() => { addFarm() }} description='Add a new farm to the game' costs='Money: 300 MW: 3' benefits='+8 tanks +4 refineries'/>
+                    <ExpansionButton title={"CO2"} onClick={() => { addFarmCo2() }} description='Max out the CO2 supply to this farm' costs='Money: 50' benefits='100% saturation of CO2 reserves'/>
+                    <ExpansionButton title={"Nutrients"} onClick={() => { addFarmNutrients() }} description='Max out the nutrient supply to this farm' costs='Money: 50' benefits='100% saturation of nutrient reserves'/>
+                    <ExpansionButton title={"Tank"} onClick={() => { addFarmTank() }} description='Add a new tank to the farm' costs='Money: 60 MW: 1' benefits='Increased algae production'/>
+                    <ExpansionButton title={"Harvest"} onClick={() => { harvestFarmAlgae()}} description='Harvest the farms algae' costs='' benefits='+$40 per kg of algae harvested'/>
+                    <ExpansionButton title={"Increase Temperature"} onClick={() =>{increaseTemp()}} description='Increase the farms tank temperature' costs='-0.25 MW per degrees' benefits='+1 degree in farm temperature'/>
+                    <ExpansionButton title={"Decrease Temperature"} onClick={() =>{decreaseTemp()}} description='Decrease the farms tank temperature' costs='+0.25 MW per degrees' benefits='-1 degree in farm temperature'/>
                 </div>
             </div>
         </div>
@@ -85,7 +101,3 @@ const ExpansionsSection = (props: ExpansionsProps) => {
 
 
 export default ExpansionsSection
-
-export type ExpansionsProps = {
-    game: GameProps;
-}

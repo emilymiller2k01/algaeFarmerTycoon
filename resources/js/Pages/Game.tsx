@@ -60,14 +60,25 @@ type ProductionData = {
     lux: number,
 };
 
+export type ResearchTask = {
+    id: number,
+    title: string,
+    task: string,
+    completed: boolean,
+    automation: boolean,
+    cost: number,
+    mw: number,
+}
+
 export type HomeProps = {
     initialGame: GameProps;
     tanks: Tank[];
     farms: Farm[];
-    productionData: ProductionData
+    productionData: ProductionData;
+    researchTasks: ResearchTask[];
 }
 
-function Home ({initialGame, tanks, farms}: HomeProps){
+function Home ({initialGame, tanks, farms, researchTasks}: HomeProps){
 
     const [game, setGame] = useState(initialGame);
     console.log(tanks)
@@ -87,15 +98,15 @@ function Home ({initialGame, tanks, farms}: HomeProps){
                         <ProductionSection />
                     </div>
                     <div className="h-[40vh]">
-                        <ExpansionsSection game={game} />
+                        <ExpansionsSection />
                     </div>
                 </div>
                 <div className="flex flex-col w-1/2 h-full border-x-2 border-x-green">
-                    <MultiSection game={game}  selectedFarmId={game.selected_farm_id}/>
+                    <MultiSection />
                 </div>
                 <div className="flex flex-col w-1/4 h-full">
                     <div className="h-[45vh]">
-                        <FarmsSection game={game} selectedFarmId={game.selected_farm_id} updateSelectedFarm={updateSelectedFarmId} />
+                        <FarmsSection updateSelectedFarm={updateSelectedFarmId} />
                     </div>
                     <div className="h-[55vh]">
                         <LogSection {...logs} />

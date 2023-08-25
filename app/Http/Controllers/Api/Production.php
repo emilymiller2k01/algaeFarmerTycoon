@@ -23,7 +23,7 @@ class Production extends Controller
 
             $farms = $game->farms()->with(['tanks', 'lights'])->get();
 
-            $algaeMass = 0;
+            $algaeMass = 1;
             $algaeRate = 0;
             $nutrientLoss = 0;
 

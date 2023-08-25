@@ -14,20 +14,18 @@ const Tank = (props: TankProps) => {
     return (
         <div className="relative">
             <div className="absolute top-[15px] left-0 p-2 flex flex-col justify-end h-[120px] w-[200px] gap-2 ">
-                <div className="h-[17px] w-full rounded-full border overflow-hidden bg-grey-light border-green-dark">
-                    <div className="h-full bg-green-dark " style={{ width: `${progress}%` }}></div>
+                <div className="h-[17px] w-full rounded-full border overflow-hidden bg-grey-light border-green-dark text-green">
+                    <div className="h-full bg-green-dark " style={{ width: `${10}%` }}> Biomass </div>
                 </div>
-                <div className="flex justify-between gap-4">
-                    <button className="border text-green-dark border-green-dark rounded-md hover:border-green hover:text-green py-2 h-[50px] w-[50px] aspect-square flex">
-                        <BasketSVG className="m-auto pb-1" />
-                    </button>
-                    <button className="border text-green-dark border-green-dark rounded-md hover:border-green hover:text-green py-2 h-[50px] w-[50px] aspect-squar flex">
-                        <TestTubeSVG className="m-auto" />
-                    </button>
-                    <button className="border text-green-dark border-green-dark rounded-md hover:border-green hover:text-green py-2 h-[50px] w-[50px] aspect-square flex">
-                        <BubblesSVG className="m-auto" />
-                    </button>
+                <div className="h-[17px] w-full rounded-full border overflow-hidden bg-grey-light border-green-dark text-green">
+                    <div className="h-full bg-yellow " style={{ width: `${10}%` }}> Nutrients </div>
                 </div>
+                <div className="h-[17px] w-full rounded-full border overflow-hidden bg-grey-light border-green-dark text-green items-center ">
+                    <div className="h-full bg-orange" style={{ width: `${10}%`, padding: '0 5px' }}>
+                        CO2
+                    </div>
+                </div>
+
             </div>
             <svg width="220" height="135" xmlns="http://www.w3.org/2000/svg">
                 <polygon points="0,15 0,135 200,135 200,15" style={{ fill: "transparent", stroke: '#42FF00', strokeWidth: 2 }} />

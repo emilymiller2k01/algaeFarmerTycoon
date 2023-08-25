@@ -16,6 +16,8 @@ class Light extends Model
         'mw'
     ];
 
+    public $timestamps = false;
+
     public function farms(){
         return $this->belongsToMany(Farm::class, 'farm_lights');
     }

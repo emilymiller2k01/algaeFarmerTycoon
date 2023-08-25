@@ -42,8 +42,6 @@ class Expansions extends Controller
             // Get a light of the requested type
             $selectedLight = Light::where('type', $lightType)->first();
 
-            //return [$selectedLight, $game];
-
             if ($game->money >= $selectedLight->cost && $game->mw >= $selectedLight->mw) {
                 //return "hello";
                 // Deduct the cost of the light from the game's money and MW
@@ -121,8 +119,8 @@ class Expansions extends Controller
             $game = Game::findOrFail($game_id);
             $farms = $game->farms();
 
-            $farmCostMoney = 0;
-            $farmCostMW = 0;
+            $farmCostMoney = 100;
+            $farmCostMW = 2;
 
             if($game->money < $farmCostMoney && $game->mw < $farmCostMW) {
                 return Inertia::location("/game/$game->id");
@@ -137,12 +135,6 @@ class Expansions extends Controller
             $game->farms()->save($newFarm);
             $game->selected_farm_id = $newFarm->id;
 
-            // Redirect to the Algae view of the new farm
-//            return Inertia::render("/game/{$game_id}/farm/{$newFarm->id}/addFarm");
-            //$farms = Farm::where('game_id', $game_id)->get();
-
-
-            //return Inertia::location("/game/$game->id");
 
         } catch (ModelNotFoundException $e){
             return response("Game Not Found", 404);
@@ -257,10 +249,10 @@ class Expansions extends Controller
 
                 // Set properties of the tank
                 $newTank->farm_id = $farm_id;
-                $newTank->nutrient_level = 0;
-                $newTank->co2_level = 0;
-                $newTank->biomass = 0;
-                $newTank->mw = 0;
+                $newTank->nutrient_level = 100;
+                $newTank->co2_level = 100;
+                $newTank->biomass = 1;
+                $newTank->mw = 0.5;
 
                 // Associate the new tank with the farm and save
                 $farm->tanks()->save($newTank);
@@ -307,7 +299,7 @@ class Expansions extends Controller
                 $totalEarned += $harvestedAlgaeInKg * 30; // £30 per kg
 
                 // Update tank biomass
-                $tank->biomass *= 0.1; // Remaining 10%
+                $tank->biomass *= 0.05; // Remaining 5%
                 $tank->save();
 
                 // Add updated tank to the list

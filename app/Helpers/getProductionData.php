@@ -6,7 +6,7 @@ if (! function_exists('getProductionData')){
     function getProductionData($game) {
 
     //only want to run this bit when the selected_farm_id of the game is changed ideally 
-        $selectedFarmId = $game->selectedFarm->id;
+        $selectedFarmId = $game->selected_farm_id;
         $selectedFarm = Farm::findOrFail($selectedFarmId);
         $luxForSelectedFarm = $selectedFarm->lux;
         $tempForSelectedFarm = $selectedFarm->temp;

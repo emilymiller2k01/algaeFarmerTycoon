@@ -3,7 +3,9 @@ import { Tooltip, Text } from '@mantine/core';
 
 const ExpansionButton = (props: ExpansionButtonProps) => {
     const tooltipContent = (
-        <div style={{ maxWidth: '200px' }}>
+        <div style={{ 
+            maxWidth: '200px', 
+            whiteSpace: 'normal',}}>
             <Text align="center">{props.description}</Text>
             <hr />
             <Text align="center">{props.costs}</Text>
@@ -13,7 +15,23 @@ const ExpansionButton = (props: ExpansionButtonProps) => {
     );
 
     return (
-        <Tooltip content={tooltipContent} withArrow placement="top">
+        <Tooltip 
+        label={tooltipContent} 
+        withArrow 
+        position="top"
+        style={{
+            background: 'black',
+            color: 'limegreen',
+            borderRadius: '10px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'color 0.2s',
+            maxWidth: '200px',
+            padding: '10px 15px',
+        }}
+        >
             <button
                 style={{
                     background: 'black',

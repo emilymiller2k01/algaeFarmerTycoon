@@ -52,9 +52,9 @@ Route::middleware('auth')->group(function () {
             'phpVersion' => PHP_VERSION,
         ]);
     });
-    Route::get('/game', [GameController::class, 'create']);
-    Route::get('/game/{game}', [GameController::class, 'show'])->name('games.show');
-    Route::post('/game', [GameController::class, 'store']);
+    Route::get('/game', [GameController::class, 'create']); // Display a form to create a new game
+    Route::get('/game/{game}', [GameController::class, 'show'])->name('games.show'); // Show a specific game
+    Route::post('/game', [GameController::class, 'store']); // Create a new game
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

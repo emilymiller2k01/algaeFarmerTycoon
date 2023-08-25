@@ -7,44 +7,22 @@ import TankContainer from "./TankContainer";
 import PowerSection from "./PowerSection";
 import AutomationSection from "./AutomationSection";
 import RefineriesSection from "./RefineriesSection";
-import { GameProps } from "../Pages/Game";
+import { HomeProps } from '../Pages/Game'
+import { router, usePage } from '@inertiajs/react';
 
-const MultiSection = (props: MultiProps) => {
-    const { game, selectedFarmId } = props;
+const MultiSection = () => {
+    const { productionData, initialGame, researchTasks} = usePage<HomeProps>().props
     const [currentTab, setCurrentTab] = useState(0);
     const [completedResearchTasks, setCompletedResearchTasks] = useState([]);
     const [completedAutomationTasks, setCompletedAutomationTasks] = useState([]);
 
-    useEffect(() => {
-        fetch('/research-tasks/completed/${game.id}')
-            .then(response => response.json())
-            .then(data => setCompletedResearchTasks(data));
-    }, []);
-
-    useEffect(() => {
-        fetch('/research-tasks/completed-automation/${game.id}')
-            .then(response => response.json())
-            .then(data => setCompletedAutomationTasks(data));
-    }, []);
 
 
-    const handleCompleteTask = (taskId) => {
-        fetch(`/api/research-tasks/complete/${taskId}`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                if(data.status === 'success') {
-                    fetch('/api/research-tasks/completed')
-                        .then(response => response.json())
-                        .then(data => setCompletedResearchTasks(data));
-                }
-            });
+    const handleCompleteTask = (taskID) => {
+        return 1;
     }
+
+    
 
     return (
         <div className="flex flex-col h-full">
@@ -69,26 +47,41 @@ const MultiSection = (props: MultiProps) => {
             {(currentTab === 0) &&
                 <div className=" py-4 h-full flex-grow flex flex-col bg-black">
                     <div className="flex flex-col gap-4 pb-20 px-4 flex-grow overflow-y-auto ">
-                        <PowerSection game={game} selectedFarmId={selectedFarmId} expanded />
-                        <TankContainer game={game} selectedFarmId={selectedFarmId} />
-                        <AutomationSection game={props.game} tasks={completedAutomationTasks} />
+                        <PowerSection game={initialGame} selectedFarmId={initialGame.selected_farm_id} expanded />
+                        <TankContainer game={initialGame} selectedFarmId={initialGame.selected_farm_id} />
+                        <AutomationSection game={initialGame} tasks={completedAutomationTasks} />
                         {
                             completedResearchTasks.some(task => task.name === "Refineries Research") &&
-                            <RefineriesSection game={props.game} />
+                            <RefineriesSection game={initialGame} />
                         }
                     </div>
                 </div>
             }
-            {(currentTab === 1) &&
+            {(currentTab === 1) && (
                 <div className="py-4 h-full flex-grow flex flex-col bg-black">
                     <h1 className="text-2xl text-green pb-4 px-4 font-semibold">Research</h1>
                     <div className="flex flex-col gap-4 pb-20 px-4 flex-grow overflow-y-auto ">
-                        {research.map((researchItem, index) => {
-                            return <InfoBox key={index} {...researchItem} onCompleteTask={handleCompleteTask} />
-                        })}
+                                <pre className='text-white'>
+                                    {JSON.stringify(researchTasks, null, 2)}
+                                </pre>
+                        {researchTasks.map((task) => (
+                            <div
+                                key={task.id}
+                                className="cursor-pointer"
+                                onClick={() => handleCompleteTask(task.id)}
+                            >
+                                <InfoBox
+                                    title={task.title}
+                                    description={task.task}
+                                    taskId={task.id.toString()}
+                                    onCompleteTask={handleCompleteTask}
+                                />
+                            </div>
+                        ))}
                     </div>
                 </div>
-            }
+            )}
+
             {(currentTab === 2) &&
                 <div className="py-4 h-full flex-grow flex flex-col bg-black">
                     <h1 className="text-2xl text-green pb-4 px-4 font-semibold">Achievements</h1>
@@ -109,7 +102,4 @@ const MultiSection = (props: MultiProps) => {
 }
 
 export default MultiSection;
-export type MultiProps = {
-    game: GameProps;
-    selectedFarmId: number;
-}
+

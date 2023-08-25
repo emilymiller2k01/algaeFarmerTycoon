@@ -108,13 +108,6 @@ class DatabaseSeeder extends Seeder
             'mw'=>1,
         ]);
 
-        $researchTasks = \App\Models\ResearchTasks::create([
-            'task' => 'grow',
-            'completed' => false,
-            'automation' => false,
-            'mw' => 0,
-        ]);
-
         \App\Models\GameResearchTasks::create([
             'game_id'=>$game->id,
             'research_tasks_id'=>$researchTasks->id,
@@ -203,5 +196,6 @@ class DatabaseSeeder extends Seeder
             'farm_id'=>$farm->id,
             'power_id'=>$gas->id,
         ]);
+
     }
 }

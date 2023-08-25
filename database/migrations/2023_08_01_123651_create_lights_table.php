@@ -17,7 +17,6 @@ return new class extends Migration
             $table->float('cost');
             $table->float('mw');
             $table->float('lux');
-            $table->timestamps();
         });
     }
 

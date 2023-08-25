@@ -39,8 +39,9 @@ class Game extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function researchTasks(){
-        return $this->belongsToMany(ResearchTasks::class, 'game_research_tasks');
+    public function researchTasks()
+    {
+        return $this->hasMany(ResearchTasks::class);
     }
 
     public function messageLog(){

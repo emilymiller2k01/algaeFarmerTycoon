@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('research_tasks', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('game_id')->references('id')->on('games');
+            $table->string("title");
             $table->string('task');
             $table->boolean('automation');
             $table->boolean('completed')->default(false);

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\getProductionData;
+use App\Models\ResearchTasks;
 
 
 class GameController extends Controller
@@ -61,45 +62,42 @@ class GameController extends Controller
         $game->mw = 0;
         $game->save();
 
-        // Create a farm associated with this game
         $farm = new Farm;
-        $farm = $game->farms()->create([
-
-        ]);
-
+        $farm->game_id = $game->id;
+        $farm->save();
 
         // Set the newly created farm as the selected_farm_id for the game
         $game->selected_farm_id = $farm->id;
+        $selectedFarm = Farm::findOrFail($game->selected_farm_id);
+// Access the lux property of the selected farm
+        $luxValue = $selectedFarm->lux;
 
-        $luxValue = $game->selectedFarm->lux;
-
+        
         $game->production()->create([
             'farmLight' => $luxValue,
         ]);
-
-
+        
+        
         $farm->save();
-
+        
         $game->save();
 
+    
         // Return a response or redirect
         return redirect()->route('games.show', ['game' => $game->id]);
     }
 
-
-
     //show a game
     public function show(Game $game){
         $this->authorize('view', $game);
-
-        // Collect all your production data
 
 
         return Inertia::render('Game', [
             'initialGame' => $game,
             'tanks' => $game->selectedFarm ? $game->selectedFarm->tanks : [],
             'farms' => $game->farms,
-            'productionData' => getProductionData($game) // Send prod data to frontend here
+            'productionData' => getProductionData($game), // Send prod data to frontend here
+            'researchTasks' => \App\Models\ResearchTasks::all(),
         ]);
     }
 
@@ -125,5 +123,7 @@ class GameController extends Controller
 
         return redirect::back();
     }
+
+
 
 }
