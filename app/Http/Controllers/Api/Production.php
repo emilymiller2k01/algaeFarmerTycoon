@@ -10,7 +10,7 @@ use App\Models\Tank;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use App\Events\GameStateUpdated;
+//use App\Events\GameStateUpdated;
 
 
 class Production extends Controller

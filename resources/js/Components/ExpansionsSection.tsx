@@ -65,11 +65,11 @@ const ExpansionsSection = () => {
     };
 
     const increaseTemp = () => {
-        router.patch(`/game/${initialGame.id}/farm/${initialGame.selected_farm_id}/increaseTemp`, {});
+        router.post(`/game/${initialGame.id}/farm/${initialGame.selected_farm_id}/increaseTemp`, {});
     };
 
     const decreaseTemp = () => {
-        router.patch(`/game/${initialGame.id}/farm/${initialGame.selected_farm_id}/decreaseTemp`, {});
+        router.post(`/game/${initialGame.id}/farm/${initialGame.selected_farm_id}/decreaseTemp`, {});
     };
 
     return (

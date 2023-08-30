@@ -310,16 +310,8 @@ class Expansions extends Controller
             $game = $farm->game;
             $game->increment('money', $totalEarned);
 
-            // The frontend (Inertia view/component) will handle using the 'updatedTanks',
-            // 'totalEarned' and 'game.money' data to update the display.
-            return Inertia::render('AlgaeHarvested', [
-                'success' => true,
-                'message' => 'Algae harvested successfully',
-                'totalHarvestedAlgae' => $totalHarvestedAlgae,
-                'totalEarned' => $totalEarned,
-                'updatedTanks' => $updatedTanks,  // The updated tanks with new biomass values
-                'currentMoney' => $game->money    // The updated money after harvesting
-            ]);
+            $farm->save();
+            $game->save();
 
         } catch (ModelNotFoundException $e){
             return Inertia::render('Error', [
@@ -351,13 +343,6 @@ class Expansions extends Controller
                 // Deduct the energy cost
                 $game->mw -= $energyCost;
                 $game->save();
-
-                // The frontend (Inertia view/component) will handle using the 'newTemperature'
-                // and 'remainingMW' data to update the production window.
-                return Inertia::render('TemperatureIncremented', [
-                    'newTemperature' => $farm->temp,
-                    'remainingMW' => $game->mw
-                ]);
 
             } else {
                 return Inertia::render('Error', [
@@ -391,13 +376,6 @@ class Expansions extends Controller
             // Increase the available energy
             $game->mw += $energyGain;
             $game->save();
-
-            // The frontend (Inertia view/component) will handle using the 'newTemperature'
-            // and 'remainingMW' data to update the production window.
-            return Inertia::render('TemperatureDecremented', [
-                'newTemperature' => $farm->temp,
-                'remainingMW' => $game->mw
-            ]);
 
         } catch (ModelNotFoundException $e) {
             return Inertia::render('Error', [

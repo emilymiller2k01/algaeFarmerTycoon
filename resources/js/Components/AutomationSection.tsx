@@ -4,11 +4,11 @@ import BasketSVG from "./Icons/BasketSVG";
 import BubblesSVG from "./Icons/BubblesSVG";
 import TestTubeSVG from "./Icons/TestTubeSVG";
 import TrashSVG from "./Icons/TrashSVG";
-import {GameProps} from "../Pages/Game";
+import {GameProps, ResearchTask} from "../Pages/Game";
 
 const AutomationSection = (props: AutomationSectionProps) => {
     const gameId = props.game.id;  // Extract game ID from the game prop
-    const automationTasks = props.tasks;
+    const researchTasks = props.tasks;
 
     return (
         <div className="px-4 pb-4 pt-2 border-2 border-green-dark rounded-[10px] bg-transparent">
@@ -22,7 +22,7 @@ const AutomationSection = (props: AutomationSectionProps) => {
                         Waste Removal
                     </p>
                 </div>
-                {automationTasks.includes('Nutrient Regulator') && (
+                {researchTasks.some(task => task.title === 'Automated Nutrient Management' && task.automation) && (
                     <div className="flex flex-col border-2 p-2 w-32 border-green-dark rounded-md">
                         <TestTubeSVG className="mx-auto my-1" />
                         <p className="text-green-dark text-center font-semibold text-xl">
@@ -30,7 +30,7 @@ const AutomationSection = (props: AutomationSectionProps) => {
                         </p>
                     </div>
                 )}
-                {automationTasks.includes('CO2 Regulator') && (
+                {researchTasks.some(task => task.title === 'CO2 Management System' && task.automation) && (
                     <div className="flex flex-col border-2 p-2 w-32 border-green-dark rounded-md">
                         <BubblesSVG className="mx-auto my-1" />
                         <p className="text-green-dark text-center font-semibold text-xl">
@@ -38,7 +38,7 @@ const AutomationSection = (props: AutomationSectionProps) => {
                         </p>
                     </div>
                 )}
-                {automationTasks.includes('Automated Harvest') && (
+                {researchTasks.some(task => task.title === 'Automated Harvesting System' && task.automation) && (
                     <div className="flex flex-col border-2 p-2 w-32 border-green-dark rounded-md">
                         <BasketSVG className="mx-auto my-1" />
                         <p className="text-green-dark text-center font-semibold text-xl">
@@ -57,5 +57,5 @@ export default AutomationSection;
 export type AutomationSectionProps = {
     game: GameProps;
     expanded?: boolean;
-    tasks: string[];
+    tasks: ResearchTask[];
 }

@@ -32,7 +32,7 @@ class GameController extends Controller
 
         if (!$user) {
             // Handle unauthenticated users, maybe redirect to the login page?
-            return redirect()->route('login');
+            return redirect()->route('landing');
         }
 
         $games = $user->games;

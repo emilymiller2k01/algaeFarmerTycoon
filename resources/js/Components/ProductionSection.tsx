@@ -34,7 +34,7 @@ const ProductionSection = () => {
         return stop
     }, [])
 
-    console.log(initialGame.mw, productionData.currentMoney, productionData.moneyRate, productionData.algaeAmount, productionData.algaeRate)
+    console.log('here', initialGame.mw, productionData.currentMoney, productionData.moneyRate, productionData.algaeAmount, productionData.algaeRate)
 
     return (
         <div className="flex flex-col">
@@ -43,7 +43,7 @@ const ProductionSection = () => {
                     Production
                 </h1>
                 <h2 className="text-2xl text-green">
-                    MW {productionData.powerOutput}
+                    MW {initialGame.mw}
                 </h2>
             </div>
             <div className="flex justify-between text-xl text-green-dark">

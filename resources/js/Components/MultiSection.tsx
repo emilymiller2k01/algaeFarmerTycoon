@@ -13,16 +13,27 @@ import { router, usePage } from '@inertiajs/react';
 const MultiSection = () => {
     const { productionData, initialGame, researchTasks} = usePage<HomeProps>().props
     const [currentTab, setCurrentTab] = useState(0);
-    const [completedResearchTasks, setCompletedResearchTasks] = useState([]);
-    const [completedAutomationTasks, setCompletedAutomationTasks] = useState([]);
+    const automatedTasks = researchTasks.filter(task => task.automation);
 
 
-
-    const handleCompleteTask = (taskID) => {
-        return 1;
-    }
-
+    const handleCompleteTask = async (taskId) => {
+        try {
+            const response = await fetch(`/research-tasks/complete/${taskId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
     
+            // if (!response.ok) {
+            //     throw new Error('Network response was not ok');
+            // }
+    
+            router.reload();
+        } catch (error) {
+            console.error('Error completing research task:', error);
+        }
+    };    
 
     return (
         <div className="flex flex-col h-full">
@@ -49,9 +60,9 @@ const MultiSection = () => {
                     <div className="flex flex-col gap-4 pb-20 px-4 flex-grow overflow-y-auto ">
                         <PowerSection game={initialGame} selectedFarmId={initialGame.selected_farm_id} expanded />
                         <TankContainer game={initialGame} selectedFarmId={initialGame.selected_farm_id} />
-                        <AutomationSection game={initialGame} tasks={completedAutomationTasks} />
+                        <AutomationSection game={initialGame} tasks={automatedTasks} />
                         {
-                            completedResearchTasks.some(task => task.name === "Refineries Research") &&
+                            researchTasks.some(task => task.id === 10) &&
                             <RefineriesSection game={initialGame} />
                         }
                     </div>
@@ -61,9 +72,6 @@ const MultiSection = () => {
                 <div className="py-4 h-full flex-grow flex flex-col bg-black">
                     <h1 className="text-2xl text-green pb-4 px-4 font-semibold">Research</h1>
                     <div className="flex flex-col gap-4 pb-20 px-4 flex-grow overflow-y-auto ">
-                                <pre className='text-white'>
-                                    {JSON.stringify(researchTasks, null, 2)}
-                                </pre>
                         {researchTasks.map((task) => (
                             <div
                                 key={task.id}
@@ -73,8 +81,8 @@ const MultiSection = () => {
                                 <InfoBox
                                     title={task.title}
                                     description={task.task}
-                                    taskId={task.id.toString()}
-                                    onCompleteTask={handleCompleteTask}
+                                    taskId={task.id}
+                                    onCompleteTask={() => handleCompleteTask(task.id)}
                                 />
                             </div>
                         ))}

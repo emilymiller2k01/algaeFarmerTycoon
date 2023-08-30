@@ -25,37 +25,34 @@ class ResearchTaskController extends Controller
             return response()->json(['message' => 'Research task already completed']);
         }
 
-        // Mark the task as completed
-        $task->update(['completed' => true]);
-
         // Call corresponding functions based on task ID
         switch ($taskId) {
             case 1:
                 $this->completeAutomatedHarvestingSystem($game, $task);
                 break;
             case 2:
-                $this->completeAutomatedNutrientManagement();
+                $this->completeAutomatedNutrientManagement($game, $task);
                 break;
             case 3:
-                $this->completedVerticalFarming();
+                $this->completedVerticalFarming($game, $task);
                 break;
             case 4:
-                $this->completedRenewableEnergies();
+                $this->completedRenewableEnergies($game, $task);
                 break;
             case 5:
-                $this->completedBubbleTechnology();
+                $this->completedBubbleTechnology($game, $task);
                 break;
             case 6: 
-                $this->completedCo2Management();
+                $this->completedCo2Management($game, $task);
                 break;
             case 7:
-                $this->completedSensorTechnology();
+                $this->completedSensorTechnology($game, $task);
                 break;
             case 8:
-                $this->completedAlgaeByProducts();
+                $this->completedAlgaeByProducts($game, $task);
                 break;
             case 9:
-                $this->completedAddingRefineries();
+                $this->completedAddingRefineries($game, $task);
                 break;
         };
 
@@ -64,70 +61,108 @@ class ResearchTaskController extends Controller
 
     public function completeAutomatedHarvesting(Game $game, Task $task)
     {
-        $game->decrement('money', 100);
+        if ($game->money >= 100 && $game->mw >= 0.5){
+            $task->completed = true;
+            $task->save();
+            $game->decrement('money', 100);
         
-        $tanks = $game->farms->flatMap(function ($farm) {
-            return $farm->tanks;
-        });
-
-        foreach ($tanks as $tank) {
-            $harvestedAlgae = $tank->biomass * 0.9; // 90% of the algae
-            $totalHarvestedAlgae += $harvestedAlgae;
-
-            // Convert grams to kilograms and calculate earnings
-            $harvestedAlgaeInKg = $harvestedAlgae / 1000;
-            $totalEarned += $harvestedAlgaeInKg * 30; // £30 per kg
-
-            // Update tank biomass
-            $tank->biomass *= 0.05; // Remaining 5%
-            $tank->save();
-
-            // Add updated tank to the list
-            $updatedTanks[] = $tank;
         }
 
-        // Add earnings to game money
-        $game = $farm->game;
-        $game->increment('money', $totalEarned);
+        
     }
 
-    public function completedAutomatedNutrientManagement()
+    public function completedAutomatedNutrientManagement(Game $game, Task $task)
     {
+        //TODO fix this function 
+        //need to run this every second 
+        //add checks for money and mw 
+        if ($game->money >= 75 && $game->mw >= 0.5){
+            $task->completed = true;
+            $task->save();
+            $game->decrement('money');
+            
+        }
+    }
+
+
+    public function completedVerticalFarming(Game $game, Task $task)
+    {
+       if ($game->money >= $task->cost){
+            $task->completed = true;
+            $task->save();
+
+            $farms = $this->farms()->with('tanks')->get();
+            foreach ($farms as $farm) {
+                foreach ($farm->tanks as $tank) {
+                    
+                        $tank->capacity = $tank->capacity * 2;
+                        $tank->save();
+                }
+            }
+        }
+    }
+
+
+    public function completedRenewableEnergies(Game $game, Task $task)
+    {
+        if ($game->money >= $task->cost){
+            $task->completed = true;
+            $task->save();
+        }
+        //complete research task 
+        // partially reload the front end so that it shows the renewables 
+    }
+
+
+    public function completedBubbleTechnology(Game $game, Task $task)
+    {
+        if ($game->money >= $task->cost && $game->mw >= $task->mw ){
+            //todo change this so it controls the pH increasing production
+            //reduce the cost of co2 adding 
+            // add ph to the production screen 
+        }
+    }
+
+    public function completedCo2Management(Game $game, Task $task)
+    {
+        //todo how to get this to run automatically 
+        if ($game->money >= $task->cost && $game->mw >= $task->mw){
+            $task->completed = true;
+            $task->save();
+            
+        }
+    }
+
+    public function completedSensorTechnology(Game $game, Task $task)
+    {
+        //more accurate readings of the co2, nutrients reducing the cost of maintainence 
+        //increase algae readings by 5%
+        if ($game->money >= $task->cost){
+            $task->completed = true;
+            $task->save();
+        }
 
     }
 
-    public function completedVerticalFarming()
+    public function completedAlgaeByProducts(Game $game, Task $task)
     {
-
+        //add refineries management to the main screen 
+        //add the different products of algae to make 
+        if ($game->money >= $task->cost){
+            $task->complete = true;
+            $task->save();
+        }
+        
     }
 
-    public function completedRenewableEnergies()
+    public function completedAddingRefineries(Game $game, Task $task)
     {
-
-    }
-
-    public function completedBubbleTechnology()
-    {
-
-    }
-
-    public function completedCo2Management()
-    {
-
-    }
-
-    public function completedSensorTechnology()
-    {
-
-    }
-
-    public function completedAlgaeByProducts()
-    {
-
-    }
-
-    public function completedAddingRefineries()
-    {
-
+        //add refineries to the main screen 
+        //add the refinery button to the expansions screen 
+        //partial relaod 
+        if ($game->money >= $task->cost){
+            $task->complete = true;
+            $task->save();
+        }
     }
 }
