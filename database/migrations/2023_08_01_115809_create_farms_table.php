@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->float('total_biomass')->default(0);
             $table->integer('lux')->default(1);
-            $table->integer('temp')->default(0);
+            $table->integer('temp')->default(20);
             $table->float('mw')->default(0);
             $table->foreignId('game_id')->references('id')->on('games');
             $table->timestamps();

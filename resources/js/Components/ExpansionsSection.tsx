@@ -61,7 +61,11 @@ const ExpansionsSection = () => {
     }
 
     const addFarmRefinery = () => {
-        router.post(`/game/${initialGame.id}/farm/${initialGame.selected_farm_id}/refinery`, {});
+        router.post(`/game/${initialGame.id}/farm/${initialGame.selected_farm_id}/refinery`, {}, {
+            onSuccess: () => {
+                router.reload({only: ['RefineriesSection']})
+            }
+        });
     };
 
     const increaseTemp = () => {

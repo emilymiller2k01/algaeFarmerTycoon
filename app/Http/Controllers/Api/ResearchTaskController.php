@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\ResearchTasks;
 use Illuminate\Http\Request;
+use App\Models\Game;
+
 
 class ResearchTaskController extends Controller
 {
@@ -16,10 +18,12 @@ class ResearchTaskController extends Controller
         return response()->json($completedTasks);
     }
 
-    public function completeResearch(Request $request, Game $gameId, Task $taskId)
+    public function completeResearch(Request $request, $gameId, $taskId)
     {
-        $game = Game::findOrFail($gameId);
-        $task = ResearchTask::findOrFail($taskId);
+        $game = Game::findOrFail(intval($gameId));
+        
+        $task = ResearchTasks::findOrFail(intval($taskId));
+      
         
         if ($task->completed) {
             return response()->json(['message' => 'Research task already completed']);
@@ -31,7 +35,7 @@ class ResearchTaskController extends Controller
                 $this->completeAutomatedHarvestingSystem($game, $task);
                 break;
             case 2:
-                $this->completeAutomatedNutrientManagement($game, $task);
+                $this->completedAutomatedNutrientManagement($game, $task);
                 break;
             case 3:
                 $this->completedVerticalFarming($game, $task);
@@ -55,39 +59,53 @@ class ResearchTaskController extends Controller
                 $this->completedAddingRefineries($game, $task);
                 break;
         };
-
-        return response()->json(['message' => 'Research task completed']);
     }
 
-    public function completeAutomatedHarvesting(Game $game, Task $task)
+    public function completeAutomatedHarvesting(Game $game, ResearchTasks $task)
     {
-        if ($game->money >= 100 && $game->mw >= 0.5){
-            $task->completed = true;
-            $task->save();
-            $game->decrement('money', 100);
-        
-        }
+        try{
 
+            if ($game->money >= 100 && $game->mw >= 0.5){
+                $task->completed = true;
+                $task->save();
+                $game->decrement('money', 100);
+            
+            }
+            else {
+
+            }
+        }
+        catch (ModelNotFoundException $e){
+            return response("Game Not Found", 404);
+        } catch (Exception $e){
+            return response($e, 500);
+        }
         
     }
 
-    public function completedAutomatedNutrientManagement(Game $game, Task $task)
+    public function completedAutomatedNutrientManagement(Game $game, ResearchTasks $task)
     {
         //TODO fix this function 
         //need to run this every second 
-        //add checks for money and mw 
-        if ($game->money >= 75 && $game->mw >= 0.5){
-            $task->completed = true;
-            $task->save();
-            $game->decrement('money');
-            
+        try {
+
+            if ($game->money >= 75 && $game->mw >= 0.5){
+                $task->completed = true;
+                $task->save();
+                $game->decrement('money');
+                
+            }
+        } catch (ModelNotFoundException $e){
+            return response("Game Not Found", 404);
+        } catch (Exception $e){
+            return response($e, 500);
         }
     }
 
 
-    public function completedVerticalFarming(Game $game, Task $task)
+    public function completedVerticalFarming(Game $game, ResearchTasks $task)
     {
-       if ($game->money >= $task->cost){
+       try{if ($game->money >= $task->cost){
             $task->completed = true;
             $task->save();
 
@@ -99,70 +117,98 @@ class ResearchTaskController extends Controller
                         $tank->save();
                 }
             }
+        }}catch (ModelNotFoundException $e){
+            return response("Game Not Found", 404);
+        } catch (Exception $e){
+            return response($e, 500);
         }
     }
 
 
-    public function completedRenewableEnergies(Game $game, Task $task)
+    public function completedRenewableEnergies(Game $game, ResearchTasks $task)
     {
-        if ($game->money >= $task->cost){
+        try{if ($game->money >= $task->cost){
             $task->completed = true;
             $task->save();
+        }}catch (ModelNotFoundException $e){
+            return response("Game Not Found", 404);
+        } catch (Exception $e){
+            return response($e, 500);
         }
         //complete research task 
         // partially reload the front end so that it shows the renewables 
     }
 
 
-    public function completedBubbleTechnology(Game $game, Task $task)
+    public function completedBubbleTechnology(Game $game, ResearchTasks $task)
     {
-        if ($game->money >= $task->cost && $game->mw >= $task->mw ){
+        try{if ($game->money >= $task->cost && $game->mw >= $task->mw ){
             //todo change this so it controls the pH increasing production
             //reduce the cost of co2 adding 
             // add ph to the production screen 
+        }}catch (ModelNotFoundException $e){
+            return response("Game Not Found", 404);
+        } catch (Exception $e){
+            return response($e, 500);
         }
     }
 
-    public function completedCo2Management(Game $game, Task $task)
+    public function completedCo2Management(Game $game, ResearchTasks $task)
     {
         //todo how to get this to run automatically 
-        if ($game->money >= $task->cost && $game->mw >= $task->mw){
+        try{if ($game->money >= $task->cost && $game->mw >= $task->mw){
             $task->completed = true;
             $task->save();
             
+        }}catch (ModelNotFoundException $e){
+            return response("Game Not Found", 404);
+        } catch (Exception $e){
+            return response($e, 500);
         }
     }
 
-    public function completedSensorTechnology(Game $game, Task $task)
+    public function completedSensorTechnology(Game $game, ResearchTasks $task)
     {
         //more accurate readings of the co2, nutrients reducing the cost of maintainence 
         //increase algae readings by 5%
-        if ($game->money >= $task->cost){
+        try{if ($game->money >= $task->cost){
             $task->completed = true;
             $task->save();
+        }}catch (ModelNotFoundException $e){
+            return response("Game Not Found", 404);
+        } catch (Exception $e){
+            return response($e, 500);
         }
 
     }
 
-    public function completedAlgaeByProducts(Game $game, Task $task)
+    public function completedAlgaeByProducts(Game $game, ResearchTasks $task)
     {
         //add refineries management to the main screen 
         //add the different products of algae to make 
-        if ($game->money >= $task->cost){
+        try{if ($game->money >= $task->cost){
             $task->complete = true;
             $task->save();
+        }}catch (ModelNotFoundException $e){
+            return response("Game Not Found", 404);
+        } catch (Exception $e){
+            return response($e, 500);
         }
         
     }
 
-    public function completedAddingRefineries(Game $game, Task $task)
+    public function completedAddingRefineries(Game $game, ResearchTasks $task)
     {
         //add refineries to the main screen 
         //add the refinery button to the expansions screen 
         //partial relaod 
-        if ($game->money >= $task->cost){
+        try{if ($game->money >= $task->cost){
             $task->complete = true;
             $task->save();
+        }}catch (ModelNotFoundException $e){
+            return response("Game Not Found", 404);
+        } catch (Exception $e){
+            return response($e, 500);
         }
     }
 }

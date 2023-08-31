@@ -8,31 +8,22 @@ import PowerSection from "./PowerSection";
 import AutomationSection from "./AutomationSection";
 import RefineriesSection from "./RefineriesSection";
 import { HomeProps } from '../Pages/Game'
-import { router, usePage } from '@inertiajs/react';
+import { router, usePage} from '@inertiajs/react';
+import axios from 'axios';
 
 const MultiSection = () => {
     const { productionData, initialGame, researchTasks} = usePage<HomeProps>().props
     const [currentTab, setCurrentTab] = useState(0);
-    const automatedTasks = researchTasks.filter(task => task.automation);
+    const automatedTasks = researchTasks.filter(task => task.automation && task.completed);
+    const [isTask10Completed, setIsTask10Completed] = useState(researchTasks.some(task => task.id === 10 && task.completed));
 
-
-    const handleCompleteTask = async (taskId) => {
-        try {
-            const response = await fetch(`/research-tasks/complete/${taskId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-    
-            // if (!response.ok) {
-            //     throw new Error('Network response was not ok');
-            // }
-    
-            router.reload();
-        } catch (error) {
-            console.error('Error completing research task:', error);
-        }
+    const handleCompleteTask = async (taskId: number) => {
+        router.post(`/game/${initialGame.id}/research-tasks/complete/${taskId}`, {}, {
+            onSuccess: () => {
+                setIsTask10Completed(taskId === 10 || isTask10Completed);
+                router.reload();
+            }
+        })
     };    
 
     return (
@@ -61,10 +52,7 @@ const MultiSection = () => {
                         <PowerSection game={initialGame} selectedFarmId={initialGame.selected_farm_id} expanded />
                         <TankContainer game={initialGame} selectedFarmId={initialGame.selected_farm_id} />
                         <AutomationSection game={initialGame} tasks={automatedTasks} />
-                        {
-                            researchTasks.some(task => task.id === 10) &&
-                            <RefineriesSection game={initialGame} />
-                        }
+                        {isTask10Completed && <RefineriesSection game={initialGame} selectedFarmId={initialGame.selected_farm_id} />}
                     </div>
                 </div>
             }
@@ -76,13 +64,15 @@ const MultiSection = () => {
                             <div
                                 key={task.id}
                                 className="cursor-pointer"
-                                onClick={() => handleCompleteTask(task.id)}
+                                // onClick={() => handleCompleteTask(task.id)}
                             >
                                 <InfoBox
                                     title={task.title}
                                     description={task.task}
                                     taskId={task.id}
                                     onCompleteTask={() => handleCompleteTask(task.id)}
+                                    cost={task.cost}
+                                    mw={task.mw}
                                 />
                             </div>
                         ))}

@@ -124,24 +124,33 @@ if (! function_exists('calculateTankMetrics')){
 //     }
 // }
 
+// 
+if (!function_exists('calculateAlgaeGrowthRate')) {
+    function calculateAlgaeGrowthRate($tank, $farm)
+    {
+        $percentageMassCapacity = ($tank->biomass / $tank->capacity) * 100;
+
+        // Calculate algae growth rate based on factors
+        $growthRate = ($tank->co2_level / 100) * ($tank->nutrient_level / 100) * (50 / $farm->lux) * (30 / $farm->temp);
+        $growthRate = $growthRate * (1 - $percentageMassCapacity / 100);
+
+        return $growthRate;
+    }
+}
+
 if (!function_exists('calculateProductionMetrics')) {
     function calculateProductionMetrics($farms)
     {
         $totalNutrientsAmount = 100;
         $totalNutrientsRate = 6;
-        $totalCO2Amount = 0;
+        $totalCO2Amount = 20;
         $totalCO2Rate = 0;
         $totalAlgaeRate = 0;
         $tankCount = 0;
 
         foreach ($farms as $farm) {
             foreach ($farm->tanks as $tank) {
-                $percentageMassCapacity = ($tank->biomass / $tank->capacity) * 100;
-                $growthRate = ($tank->co2_level * $tank->nutrient_level * $farm->lux * $farm->temperature) / 1000;
-                $growthRate = $growthRate * (1 - $percentageMassCapacity / 100);
-
-                // Calculate algae rate
-                $algaeRate = $growthRate; // Modify this calculation as needed
+                $algaeRate = calculateAlgaeGrowthRate($tank, $farm);
 
                 // Calculate nutrient amount and rate for each tank and accumulate
                 $totalNutrientsAmount += $tank->nutrient_level * $algaeRate;
@@ -177,4 +186,3 @@ if (!function_exists('calculateProductionMetrics')) {
         ];
     }
 }
-

@@ -92,13 +92,13 @@ class Expansions extends Controller
 
             // Create a new refinery.
             $refinery = new Refinery;
-            $refinery->produce = $request->input('produce');
-            $refinery->mw = $request->input('mw');
+            $refinery->produce = 'food';
+            $refinery->mw = 3;
 
             // Attach the refinery to the farm.
             $farm->refineries()->save($refinery);
 
-            return Inertia::location("/game/$game->id");
+            //return Inertia::location("/game/$game->id");
 
         } catch (ModelNotFoundException $e) {
             return Inertia::render('Error', [

@@ -27,6 +27,18 @@ export type Tank = {
     mw: number
 }
 
+export enum Produce{
+    biofuel, 
+    antioxidants,
+    fertiliser,
+    food,
+}
+
+export type Refinery = {
+    produce: Produce;
+    mw: number
+}
+
 export type Farm = {
     id: number;
     tanks: Tank[];
@@ -76,6 +88,7 @@ export type HomeProps = {
     farms: Farm[];
     productionData: ProductionData;
     researchTasks: ResearchTask[];
+    refineries: Refinery[];
 }
 
 function Home ({initialGame, tanks, farms, researchTasks}: HomeProps){

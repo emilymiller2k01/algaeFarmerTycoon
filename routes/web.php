@@ -84,9 +84,9 @@ Route::post('/game/{game_id}/farm/{farm_id}/decreaseTemp', [Expansions::class, '
 Route::post('/game/{game_id}/increase-mw', [App\Http\Controllers\Api\EnergyController::class, 'increaseMW']);
 Route::post('/game/{game_id}/decrease-mw', [App\Http\Controllers\Api\EnergyController::class, 'decreaseMW']);
 Route::post('/game/{game_id}/farm/{farm_id}/purchaseEnergy', [EnergyController::class, 'purchaseEnergy']);
-Route::get('/research-tasks/completed/{game_id}', [ResearchTaskController::class, 'showCompletedTasks'])->name('research-tasks-completed');
-Route::post('/research-tasks/complete/{taskId}', [ResearchTaskController::class, 'completeTask'])->name('research-tasks.complete');
-Route::get('/research-tasks/completed-automation/{game_id}', [ResearchTaskController::class, 'showCompletedAutomationTasks'])->name('research-tasks.automation.completed');
+Route::get('/game/{game_id}/research-tasks/completed', [ResearchTaskController::class, 'showCompletedTasks'])->name('research-tasks-completed');
+Route::post('/game/{game_id}/research-tasks/complete/{taskId}', [ResearchTaskController::class, 'completeResearch']);
+Route::get('/game/{game_id}/research-tasks/completed-automation', [ResearchTaskController::class, 'showCompletedAutomationTasks'])->name('research-tasks.automation.completed');
 
 
 require __DIR__.'/auth.php';
