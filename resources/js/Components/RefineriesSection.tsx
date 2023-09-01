@@ -5,12 +5,15 @@ import RefinarySVG from "./Icons/RefinarySVG";
 import SettingsSVG from "./Icons/SettingsSVG";
 import TestTubeSVG from "./Icons/TestTubeSVG";
 import TrashSVG from "./Icons/TrashSVG";
-import {GameProps, Produce} from "../Pages/Game";
+import {GameProps, Produce, HomeProps} from "../Pages/Game";
 import {PageProps} from "@inertiajs/inertia";
 import {router, usePage} from "@inertiajs/react";
 
-const RefineriesSection = ({ game, selectedFarmId }) => {
+const RefineriesSection: React.FC<RefineriesSectionProps> = ({ game, selectedFarmId }) => {
     const {refineries} = usePage<{refineries:Refinery[]}>().props
+
+    console.log('props', usePage().props); // Log the entire props object
+    console.log('refineries', refineries);
 
     return (
         <div className="px-4 pb-4 pt-2 border-2 border-green-dark rounded-[10px] bg-transparent">

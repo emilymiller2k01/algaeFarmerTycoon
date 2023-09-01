@@ -18,6 +18,18 @@ export type GameProps = {
     mw_cost: number;
     selected_farm_id: number;
 }
+export type Power = {
+    type: PowerTypes,
+    startup_cost: number, 
+    ongoing_cost: number,
+    mw: number,
+}
+
+export enum PowerTypes{
+    gas, 
+    solar, 
+    wind,
+}
 
 export type Tank = {
     farm_id: number
@@ -89,13 +101,13 @@ export type HomeProps = {
     productionData: ProductionData;
     researchTasks: ResearchTask[];
     refineries: Refinery[];
+    powers: Power[];
 }
 
-function Home ({initialGame, tanks, farms, researchTasks}: HomeProps){
+function Home ({initialGame, tanks, farms, researchTasks, refineries, powers}: HomeProps){
 
     const [game, setGame] = useState(initialGame);
-    console.log(tanks)
-    console.log("farms:", farms)
+    console.log('refineries', refineries);
 
     // This function will be passed to FarmSection to update the selected_farm_id
     const updateSelectedFarmId = (newId) => {

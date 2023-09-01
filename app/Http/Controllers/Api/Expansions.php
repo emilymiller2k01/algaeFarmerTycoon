@@ -57,12 +57,6 @@ class Expansions extends Controller
 
                 // Associate the light with the selected farm
                 $selectedFarm->lights()->attach($selectedLight->id);
-
-                return Inertia::render('LightAdded', [
-                    'success' => true,
-                    'message' => 'Light added successfully',
-                    // ... [any other data you want to pass as props]
-                ]);
             }
         } catch (ModelNotFoundException $e){
             return response("Game Not Found", 404);

@@ -4,11 +4,12 @@ import PowerSVG from "./Icons/PowerSVG";
 import SunSVG from "./Icons/SunSVG";
 import WindSVG from "./Icons/WindSVG";
 import {GameProps} from "../Pages/Game";
+import { HomeProps } from '../Pages/Game'
+import { router, usePage} from '@inertiajs/react';
 
-
-
-const PowerSection = ({game, selectedFarmId, expanded = false, wind = 0, solar = 0, gas = 0 }: PowerSectionProps) => {
-
+const PowerSection = ({game, selectedFarmId, expanded = false}: PowerSectionProps) => {
+    const { productionData, initialGame, researchTasks} = usePage<HomeProps>().props
+    const [researchedRenewables, setResearchedRenewables] = useState(researchTasks.some(task => task.id === 10 && task.completed));
     const [researchedTechnologies, setResearchedTechnologies] = useState<string[]>([]);
 
     useEffect(() => {

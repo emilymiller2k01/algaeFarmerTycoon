@@ -76,8 +76,6 @@ class GameController extends Controller
         $game->production()->create([
             'farmLight' => $luxValue,
         ]);
-        
-        
         $farm->save();
         
         $game->save();
@@ -90,7 +88,12 @@ class GameController extends Controller
     //show a game
     public function show(Game $game){
         $this->authorize('view', $game);
+        $refineries = [];
+        foreach ($game->farms as $farm) {
+            $refineries = array_merge($refineries, $farm->refineries->toArray());
+        }
 
+        $powers
 
         return Inertia::render('Game', [
             'initialGame' => $game,
@@ -98,6 +101,7 @@ class GameController extends Controller
             'farms' => $game->farms,
             'productionData' => getProductionData($game), // Send prod data to frontend here
             'researchTasks' => \App\Models\ResearchTasks::all(),
+            'refineries' => $refineries,
         ]);
     }
 

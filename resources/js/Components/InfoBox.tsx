@@ -35,16 +35,20 @@ const InfoBox = (props: InfoBoxProps) => {
             }}
         >
             <div
-                className="px-2 py-2 border border-green-dark w-full"
+                className={`px-2 py-2 border w-full ${
+                    props.completed ? 'border-yellow-dark' : 'border-green-dark'
+                } ${
+                    props.completed ? 'text-yellow' : ''
+                }`}
                 onClick={() => props.onCompleteTask?.(props.taskId)}
                 onMouseOver={() => (document.body.style.cursor = 'pointer')}
                 onMouseOut={() => (document.body.style.cursor = 'default')}
                 style={{ cursor: 'pointer' }} // Apply cursor style directly
             >
-                <h2 className="text-2xl text-green font-semibold">
-                    {props.title}
+                <h2 className={`text-2xl ${props.completed ? 'text-yellow' : 'text-green'} font-semibold`}>
+                {props.title}
                 </h2>
-                <p className="text-xl text-green-dark">
+                <p className={`text-xl ${props.completed ? 'text-yellow-dark' : 'text-green-dark'}`}>
                     {props.description}
                 </p>
             </div>
@@ -58,6 +62,7 @@ export type InfoBoxProps = {
     title: string;
     description: string;
     taskId?: Number; 
+    completed: Boolean;
     onCompleteTask?: (taskId: Number) => void;
     cost: Number;
     mw: Number;

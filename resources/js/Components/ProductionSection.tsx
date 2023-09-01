@@ -47,26 +47,20 @@ const ProductionSection = () => {
                 </h2>
             </div>
             <div className="flex justify-between text-xl text-green-dark">
-                    <p className="">
-                       $ Money
-                    </p>
-                    <p className="">
-                        {productionData.currentMoney}
-                    </p>
-                    <p>
-                        {productionData.moneyRate}
-                    </p>
-                </div>
+                <p className="">$ Money</p>
+                <p className="">{Number(productionData.currentMoney).toFixed(2)}</p>
+                <p>{Number(productionData.moneyRate).toFixed(2)}</p>
+            </div>
 
             <div className="flex justify-between text-xl text-green-dark">
                 <p className="">
                     <DarkTestTubeSVG className="inline-block -translate-y-[2px] p-[2px] stroke-green-dark" /> Algae Mass
                 </p>
                 <p className="">
-                    {productionData.algaeAmount || 0}
+                    {Number(productionData.algaeAmount || 0).toFixed(2)}
                 </p>
                 <p>
-                    {productionData.algaeRate || 0}
+                    {Number(productionData.algaeRate || 0).toFixed(2)}
                 </p>
             </div>
             <div className="flex justify-between text-xl text-yellow-dark">
@@ -74,10 +68,10 @@ const ProductionSection = () => {
                     <BubblesSVG className="inline-block -translate-y-[2px]" /> CO2
                 </p>
                 <p className="">
-                    {productionData.co2Amount || 0}
+                    {Number(productionData.co2Amount || 0).toFixed(2)}
                 </p>
                 <p>
-                    {productionData.co2Rate || 0}%
+                    {Number(productionData.co2Rate || 0).toFixed(2)}%
                 </p>
             </div>
             <div className="flex justify-between text-xl text-green-dark">
@@ -85,11 +79,12 @@ const ProductionSection = () => {
                     <TestTubeSVG className="inline-block -translate-y-[2px]" /> Nutrient Loss
                 </p>
                 <p>
-                    {productionData.nutrientsAmount}
+                    {Number(productionData.nutrientsAmount).toFixed(2)}
                 </p>
                 <p className="">
-                    {productionData.nutrientsRate || 0}%
+                    {Number(productionData.nutrientsRate || 0).toFixed(2)}%
                 </p>
+
             </div>
             <div className="flex justify-between text-xl text-yellow-dark">
                     <p className="">

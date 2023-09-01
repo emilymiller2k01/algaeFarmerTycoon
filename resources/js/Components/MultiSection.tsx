@@ -17,6 +17,8 @@ const MultiSection = () => {
     const automatedTasks = researchTasks.filter(task => task.automation && task.completed);
     const [isTask10Completed, setIsTask10Completed] = useState(researchTasks.some(task => task.id === 10 && task.completed));
 
+
+
     const handleCompleteTask = async (taskId: number) => {
         router.post(`/game/${initialGame.id}/research-tasks/complete/${taskId}`, {}, {
             onSuccess: () => {
@@ -60,22 +62,25 @@ const MultiSection = () => {
                 <div className="py-4 h-full flex-grow flex flex-col bg-black">
                     <h1 className="text-2xl text-green pb-4 px-4 font-semibold">Research</h1>
                     <div className="flex flex-col gap-4 pb-20 px-4 flex-grow overflow-y-auto ">
-                        {researchTasks.map((task) => (
-                            <div
-                                key={task.id}
-                                className="cursor-pointer"
-                                // onClick={() => handleCompleteTask(task.id)}
-                            >
-                                <InfoBox
-                                    title={task.title}
-                                    description={task.task}
-                                    taskId={task.id}
-                                    onCompleteTask={() => handleCompleteTask(task.id)}
-                                    cost={task.cost}
-                                    mw={task.mw}
-                                />
-                            </div>
-                        ))}
+                        {researchTasks
+                            .slice() // Create a copy of the array to avoid mutating the original array
+                            .sort((a, b) => (a.completed ? 1 : -1)) // Sort completed tasks to the bottom
+                            .map((task) => (
+                                <div
+                                    key={task.id}
+                                    className="cursor-pointer"
+                                >
+                                    <InfoBox
+                                        title={task.title}
+                                        description={task.task}
+                                        taskId={task.id}
+                                        completed={task.completed}
+                                        onCompleteTask={() => handleCompleteTask(task.id)}
+                                        cost={task.cost}
+                                        mw={task.mw}
+                                    />
+                                </div>
+                            ))}
                     </div>
                 </div>
             )}
