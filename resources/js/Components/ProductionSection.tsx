@@ -46,7 +46,7 @@ const ProductionSection = () => {
                     MW {initialGame.mw}
                 </h2>
             </div>
-            <div className="flex justify-between text-xl text-green-dark">
+            <div className="flex justify-between text-xl text-yellow-dark">
                 <p className="">$ Money</p>
                 <p className="">{Number(productionData.currentMoney).toFixed(2)}</p>
                 <p>{Number(productionData.moneyRate).toFixed(2)}</p>
@@ -54,7 +54,7 @@ const ProductionSection = () => {
 
             <div className="flex justify-between text-xl text-green-dark">
                 <p className="">
-                    <DarkTestTubeSVG className="inline-block -translate-y-[2px] p-[2px] stroke-green-dark" /> Algae Mass
+                    <AlgaeSVG className="inline-block -translate-y-[2px] p-[2px] stroke-green-dark" /> Algae Mass
                 </p>
                 <p className="">
                     {Number(productionData.algaeAmount || 0).toFixed(2)}

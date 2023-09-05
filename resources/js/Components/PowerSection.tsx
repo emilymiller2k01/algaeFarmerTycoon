@@ -12,6 +12,9 @@ const PowerSection = ({game, selectedFarmId, expanded = false}: PowerSectionProp
     const [researchedRenewables, setResearchedRenewables] = useState(researchTasks.some(task => task.id === 10 && task.completed));
     const [researchedTechnologies, setResearchedTechnologies] = useState<string[]>([]);
 
+    //TODO get rid of this useEffect 
+    //pass through the props for the power enum 
+
     useEffect(() => {
         const fetchData = async () => {
             try {
