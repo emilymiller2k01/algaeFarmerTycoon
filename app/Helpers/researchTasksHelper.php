@@ -1,21 +1,11 @@
 <?php
 
-namespace Database\Seeders;
-
 use App\Models\Game;
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\ResearchTasks;
 
-class ResearchSeeder extends Seeder
-{
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
+if (! function_exists('createAndAssignResearchTasks')){
+    function createAndAssignResearchTasks(Game $game)
     {
-        $games = Game::all();
         $researchTasks = [
             [
                 'title' => 'Automated Harvesting System',
@@ -99,18 +89,11 @@ class ResearchSeeder extends Seeder
             ],
             ];
 
-            foreach ($games as $game) {
-                foreach ($researchTasks as $task) {
-                    DB::table('research_tasks')->insert([
-                        'game_id' => $game->id,
-                        'title' => $task['title'],
-                        'task' => $task['task'],
-                        'completed' => $task['completed'],
-                        'automation' => $task['automation'],
-                        'cost' => $task['cost'],
-                        'mw' => $task['mw'],
-                    ]);
-                }
-            }
+        foreach ($researchTasks as $taskData) {
+            $researchTask = new ResearchTasks;
+            $researchTask->game_id = $game->id;
+            $researchTask->fill($taskData);
+            $researchTask->save();
+        }
     }
 }

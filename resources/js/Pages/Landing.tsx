@@ -1,12 +1,11 @@
 import '../../css/app.css'
-import { InertiaLink } from '@inertiajs/inertia-react';
-import { Head } from '@inertiajs/react';
 import React, { useState } from "react";
 import {router} from "@inertiajs/react";
+import { PageProps } from '../types';
+import { GameProps } from './Game';
 
-const Landing = ({ auth, games}) => {
-
-
+const Landing = ({ auth, games }: PageProps<LandingProps>) => {
+    
     const [gameName, setGameName] = useState(''); // State to store the game name
     const [showModal, setShowModal] = useState(false); // State to show/hide the modal
 
@@ -24,24 +23,26 @@ const Landing = ({ auth, games}) => {
 
 
         router.post('/game', {
-            user_id: auth.id,
+            user_id: auth.user.id,
             name: gameName
         });
 
 
     };
 
+    console.log(games);
+
 
     return (
         <div>
             <h1>Welcome to Our App!</h1>
 
-            {auth.user ? (
+            {auth?.user ? (
                 <div>
                     <p>Welcome back, {auth.user.name}!</p>
                     <div className="p-6 text-gray-900">
 
-                            {/* <h3>Your Games</h3>
+                            <h3>Your Games</h3>
                             {games.length ? (
                                 <ul>
                                     {games.map(game => (
@@ -57,7 +58,7 @@ const Landing = ({ auth, games}) => {
                             <button onClick={openModal}>Start New Game</button>
 
                             {/* Modal for game name */}
-                            {/* {showModal && (
+                            {showModal && (
                                 <div>
                                     <div>Please enter game name:</div>
                                     <input
@@ -68,7 +69,7 @@ const Landing = ({ auth, games}) => {
                                     <button onClick={handleNewGame}>Confirm</button>
                                     <button onClick={closeModal}>Cancel</button>
                                 </div>
-                            )}  */}
+                            )} 
                         </div>
                 </div>
             ) : (
@@ -80,5 +81,9 @@ const Landing = ({ auth, games}) => {
         </div>
     );
 };
+
+export type LandingProps = {
+    games: GameProps[];
+}
 
 export default Landing;

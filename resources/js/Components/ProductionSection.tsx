@@ -34,8 +34,6 @@ const ProductionSection = () => {
         return stop
     }, [])
 
-    console.log('here', initialGame.mw, productionData.currentMoney, productionData.moneyRate, productionData.algaeAmount, productionData.algaeRate)
-
     return (
         <div className="flex flex-col">
             <div className="flex px-8 py-6 bg-grey justify-between font-semibold">

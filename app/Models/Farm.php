@@ -88,10 +88,10 @@ class Farm extends Model
             // Create a new tank when a farm is created
             $tank = new Tank([
                 // Fill in any default values or necessary fields for the Tank
-                'nutrient_level' => 0,
-                'co2_level' => 0,
-                'biomass' => 0,
-                'mw' => 0,
+                'nutrient_level' => 100,
+                'co2_level' => 100,
+                'biomass' => 0.1,
+                'mw' => 1,
             ]);
             $farm->tanks()->save($tank);
         });

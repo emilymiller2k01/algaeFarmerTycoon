@@ -12,14 +12,21 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\getProductionData;
 use App\Models\ResearchTasks;
+//use App\Helpers\researchTasksHelper;
 
 
 class GameController extends Controller
 {
+
+    
     //display a listing of the resource
     public function index($user_id) {
         $user = User::find($user_id);
         $games = $user->games;
+
+        $games->map(function ($game) {
+            $game->length = $game->length;
+        });
 
         return Inertia::render('User/List', [
             'games' => $games,
@@ -30,15 +37,20 @@ class GameController extends Controller
     {
         $user = auth()->user();
 
+        dd($user);
+
         if (!$user) {
-            // Handle unauthenticated users, maybe redirect to the login page?
+            // Handle unauthenticated users by redirecting to the landing page
             return redirect()->route('landing');
         }
 
-        $games = $user->games;
+        $games = $user->games->toArray();
 
-        return inertia('Dashboard', ['games' => $games]);
+        dd($games);
+
+        return inertia('Landing', ['auth' => auth()->user(), 'games' => $games]);
     }
+
 
 
     //create a new game
@@ -54,6 +66,89 @@ class GameController extends Controller
             'name' => 'required|string|max:255',
             'user_id' => 'required|integer|exists:users,id'
         ]);
+
+        $researchTasks = [
+        [
+            'title' => 'Automated Harvesting System',
+            'task' => 'By successfully implementing an automated harvesting system, you can now enjoy increased efficiency in your farm operations. This advanced technology streamlines the harvesting process, saving you valuable time and resources.',
+            'completed' => false,
+            'automation' => true,
+            'cost' => 75,
+            'mw' => 0.5,
+        ],
+        [
+            'title' => 'Automated Nutrient Management',
+            'task' => 'With the successful implementation of automated nutrient management, you can experience enhanced efficiency in your farm operations. This technology ensures optimal nutrient levels for your algae, leading to improved growth and higher yields.',
+            'completed' => false,
+            'automation' => true,
+            'cost' => 75,
+            'mw' => 0.5,
+        ],
+        [
+            'title' => 'Heaters',
+            'task' => 'With implementation of heaters you can consistently keep the tank temperature constant. This technology increases algae growth, however it requires electricity to be able to work.',
+            'completed' => false,
+            'automation' => true,
+            'cost' => 25,
+            'mw' => 0.5,
+        ],
+        [
+            'title' => 'Vertical Farming',
+            'task' => 'Unlock the potential of vertical farming, a groundbreaking innovation that allows you to double the tank capacity of each farm. This expansion enables you to cultivate a greater quantity of algae and increase your overall production capabilities.',
+            'completed' => false,
+            'automation' => false,
+            'cost' => 200,
+            'mw' => 0,
+        ],
+        [
+            'title' => 'Renewable Energies',
+            'task' => "Embrace renewable energy sources such as solar and wind power to fuel your farm operations. By harnessing these sustainable energy options, you can reduce your environmental impact and enhance your farm's sustainability.",
+            'completed' => false,
+            'automation' => false,
+            'cost' => 25,
+            'mw' => 0,
+        ],
+        [
+            'title' => 'Bubble Technology',
+            'task' =>"Introduce bubble technology to your farm, optimising gas supply and creating an ideal environment for algae growth. This innovation enhances productivity and supports the health and vitality of your algae culture.",
+            'completed' => false,
+            'automation' => false,
+            'cost' => 45,
+            'mw' => 0.5,
+        ],
+        [
+            'title' => 'CO2 Management System',
+            'task' =>"Implement an advanced CO2 management system to regulate and optimise carbon dioxide levels in your algae farm. This technology allows for precise control over CO2 supplementation, ensuring that your algae receive the ideal amount for maximum growth and productivity.",
+            'completed' => false,
+            'automation' => true,
+            'cost' => 75,
+            'mw' => 0.5,
+        ],
+        [
+            'title' => 'Sensor Technology',
+            'task' =>"Implement sensors into your tanks for accurate measurements of algae concentration, nutrients and CO2, reducing wastage of nutrients and CO2.",
+            'completed' => false,
+            'automation' => false,
+            'cost' => 100,
+            'mw' => 0,
+        ],
+        [
+            'title' => 'Algae By-products',
+            'task' =>"Learn how to refine and produce different algae by-products for increased revenue.",
+            'completed' => false,
+            'automation' => false,
+            'cost' => 100,
+            'mw' => 0,
+        ],
+        [
+            'title' => 'Adding Refineries',
+            'task' =>"Upgrade your farm to incorporate refineries to make algae by-products.",
+            'completed' => false,
+            'automation' => false,
+            'cost' => 150,
+            'mw' => 0,
+        ],
+        ];
 
         // Create the new game
         $game = new Game;
@@ -76,10 +171,17 @@ class GameController extends Controller
         $game->production()->create([
             'farmLight' => $luxValue,
         ]);
+
+        foreach ($researchTasks as $taskData) {
+            $researchTask = new ResearchTasks;
+            $researchTask->game_id = $game->id;
+            $researchTask->fill($taskData);
+            $researchTask->save();
+        }
+
         $farm->save();
         
         $game->save();
-
     
         // Return a response or redirect
         return redirect()->route('games.show', ['game' => $game->id]);
@@ -89,19 +191,21 @@ class GameController extends Controller
     public function show(Game $game){
         $this->authorize('view', $game);
         $refineries = [];
+        $powers = [];
         foreach ($game->farms as $farm) {
             $refineries = array_merge($refineries, $farm->refineries->toArray());
+            $powers = array_merge($powers, $farm->powers->toArray());
         }
 
-        $powers
-
+        
         return Inertia::render('Game', [
             'initialGame' => $game,
             'tanks' => $game->selectedFarm ? $game->selectedFarm->tanks : [],
             'farms' => $game->farms,
             'productionData' => getProductionData($game), // Send prod data to frontend here
-            'researchTasks' => \App\Models\ResearchTasks::all(),
+            'researchTasks' => $game->researchTasks,
             'refineries' => $refineries,
+            'powers' => $powers,
         ]);
     }
 
@@ -128,6 +232,15 @@ class GameController extends Controller
         return redirect::back();
     }
 
+    private function createAndAssignResearchTasks(Game $game)
+    {
+       
 
-
+        foreach ($researchTasks as $taskData) {
+            $researchTask = new ResearchTasks;
+            $researchTask->game_id = $game->id;
+            $researchTask->fill($taskData);
+            $researchTask->save();
+        }
+    }
 }

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import Tank, {TankProps} from './Tank';
+import Tank from './Tank';
 import { GameProps } from '../Pages/Game';
 import axios from "axios";
 import {router, usePage} from "@inertiajs/react";
-import {PageProps} from "@inertiajs/inertia";
+import { PageProps } from '../types';
 
 type Tank = {
     id:number
@@ -13,7 +13,7 @@ type Tank = {
     biomass: number
     mw: number
 }
-const TankContainer: React.FC<TankContainerProps> = ({ game, selectedFarmId }) => {
+const TankContainer = ({ game, selectedFarmId }: PageProps<TankContainerProps>) => {
 
     const {tanks} = usePage<{tanks:Tank[]}>().props
 

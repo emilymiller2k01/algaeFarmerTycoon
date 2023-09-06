@@ -6,10 +6,10 @@ import SettingsSVG from "./Icons/SettingsSVG";
 import TestTubeSVG from "./Icons/TestTubeSVG";
 import TrashSVG from "./Icons/TrashSVG";
 import {GameProps, Produce, HomeProps} from "../Pages/Game";
-import {PageProps} from "@inertiajs/inertia";
 import {router, usePage} from "@inertiajs/react";
+import { PageProps } from '../types';
 
-const RefineriesSection: React.FC<RefineriesSectionProps> = ({ game, selectedFarmId }) => {
+const RefineriesSection = ({ game, selectedFarmId } : PageProps<RefineriesSectionProps>) => {
     const {refineries} = usePage<{refineries:Refinery[]}>().props
 
     console.log('props', usePage().props); // Log the entire props object
