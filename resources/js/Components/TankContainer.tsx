@@ -13,7 +13,7 @@ type Tank = {
     biomass: number
     mw: number
 }
-const TankContainer = ({ game, selectedFarmId }: PageProps<TankContainerProps>) => {
+const TankContainer = ({ game, selectedFarmId }: TankContainerProps) => {
 
     const {tanks} = usePage<{tanks:Tank[]}>().props
 

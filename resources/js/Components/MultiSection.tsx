@@ -15,14 +15,14 @@ const MultiSection = () => {
     const { productionData, initialGame, researchTasks} = usePage<HomeProps>().props
     const [currentTab, setCurrentTab] = useState(0);
     const automatedTasks = researchTasks.filter(task => task.automation && task.completed);
-    const [isTask10Completed, setIsTask10Completed] = useState(researchTasks.some(task => task.id === 10 && task.completed));
+    const [isTask10Completed, setIsTask10Completed] = useState(researchTasks.some(task => task.title === "Adding Refineries" && task.completed));
 
 
 
-    const handleCompleteTask = async (taskId: number) => {
+    const handleCompleteTask = async (taskId: number, taskTitle: string) => {
         router.post(`/game/${initialGame.id}/research-tasks/complete/${taskId}`, {}, {
             onSuccess: () => {
-                setIsTask10Completed(taskId === 10 || isTask10Completed);
+                setIsTask10Completed(taskTitle === "Adding Refineries" || isTask10Completed);
                 router.reload();
             }
         })
@@ -75,7 +75,7 @@ const MultiSection = () => {
                                         description={task.task}
                                         taskId={task.id}
                                         completed={task.completed}
-                                        onCompleteTask={() => handleCompleteTask(task.id)}
+                                        onCompleteTask={() => handleCompleteTask(task.id, task.title)}
                                         cost={task.cost}
                                         mw={task.mw}
                                     />

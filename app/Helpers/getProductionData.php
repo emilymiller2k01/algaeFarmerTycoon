@@ -13,22 +13,22 @@ if (! function_exists('getProductionData')){
 
         $algaeHarvest = 2;
 
-        $moneyRate = $algaeHarvest * 10;
+        //$moneyRate = $algaeHarvest * 10;
+        //$moneyRate = 1;
 
         $productionMetrics = calculateProductionMetrics($game);
 
         $averageAlgaeRate = $productionMetrics['algaeRate'];
         $biomass = $productionMetrics['biomass'];
-        $nutrientsAmount = $productionMetrics['nutrientsAmount'];
+        $nutrientsAmount =($productionMetrics['nutrientsAmount']);
         $nutrientsRate = $productionMetrics['nutrientsRate'];
         $co2Amount = $productionMetrics['co2Amount'];
-        $co2Rate = $productionMetrics['co2Rate'];
+        $co2Rate = $productionMetrics['co2Rate'] /100;
 
 
         return [
-            "currentMoney" => $game->money,
             "farmData" => $game->farms,
-            "moneyRate" => $moneyRate,
+            "moneyRate" => 1,
             "algaeRate" => $averageAlgaeRate,
             "algaeMass" => $biomass,
             "algaeHarvest" => 10,
@@ -90,42 +90,23 @@ if (!function_exists('calculateAlgaeGrowthRate')) {
 if (!function_exists('calculateProductionMetrics')) {
     function calculateProductionMetrics($game)
     {
-    //    foreach ($farms as $farm) {
-    //         foreach ($farm->tanks as $tank) {
-    //             $algaeRate = calculateAlgaeGrowthRate($tank, $farm);
-
-    //             // Calculate nutrient amount and rate for each tank and accumulate
-    //             $totalNutrientsAmount += $tank->nutrient_level * $algaeRate;
-    //             $totalNutrientsRate += $algaeRate;
-
-    //             // Calculate CO2 amount and rate for each tank and accumulate
-    //             $totalCO2Amount += $tank->co2_level * $algaeRate;
-    //             $totalCO2Rate += $algaeRate;
-
-    //             // Accumulate algae rate
-    //             $totalAlgaeRate += $algaeRate;
-
-    //             $tankCount++;
-    //         }
-    //     }
-
         $tankCount = getTankCount($game);
 
         $tankMetrics = calculateTankMetrics($game->farms);
 
-        $nutrientsAmount = 100;
+        $nutrientsAmount = 0;
         $nutrientsRate = 0;
-        $co2Amount = 100;
+        $co2Amount = 0;
         $co2Rate = 0;
         $algaeRate = 0;
         $biomass = 0;
 
         foreach($tankMetrics as $metric){
-            $biomass -= $metric['biomass'];
-            $nutrientsAmount -= $metric['nutrientLevel'];
-            $nutrientsRate -= $metric['nutrientRate'];
-            $co2Rate -= $metric['co2Level'];
-            $co2Amount -= $metric['co2Rate'];
+            $biomass += $metric['biomass'];
+            $nutrientsAmount += $metric['nutrientLevel'];
+            $nutrientsRate += $metric['nutrientRate'];
+            $co2Rate += $metric['co2Level'];
+            $co2Amount += $metric['co2Rate'];
         }
 
 

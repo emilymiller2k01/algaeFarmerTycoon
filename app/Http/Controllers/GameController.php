@@ -37,8 +37,6 @@ class GameController extends Controller
     {
         $user = auth()->user();
 
-        dd($user);
-
         if (!$user) {
             // Handle unauthenticated users by redirecting to the landing page
             return redirect()->route('landing');

@@ -13,9 +13,9 @@ import { HomeProps } from '../Pages/Game'
 import { useInterval } from '@mantine/hooks'
 
 
-const ProductionSection = () => {
+const ProductionSection = (props: HomeProps) => {
 
-    const { productionData, initialGame } = usePage<HomeProps>().props
+    const { productionData, initialGame } = props;
 
     const reloadData = () => {
         console.log('Prod data:');
@@ -46,16 +46,16 @@ const ProductionSection = () => {
             </div>
             <div className="flex justify-between text-xl text-yellow-dark">
                 <p className="">$ Money</p>
-                <p className="">{Number(productionData.currentMoney).toFixed(2)}</p>
+                <p className="">{Number(initialGame.money).toFixed(2)}</p>
                 <p>{Number(productionData.moneyRate).toFixed(2)}</p>
             </div>
 
             <div className="flex justify-between text-xl text-green-dark">
                 <p className="">
-                    <AlgaeSVG className="inline-block -translate-y-[2px] p-[2px] stroke-green-dark" /> Algae Mass
+                    <AlgaeSVG className="inline-block -translate-y-[2px] p-[2px]" /> Algae Mass
                 </p>
                 <p className="">
-                    {Number(productionData.algaeAmount || 0).toFixed(2)}
+                    {Number(productionData.algaeMass || 0).toFixed(2)}
                 </p>
                 <p>
                     {Number(productionData.algaeRate || 0).toFixed(2)}

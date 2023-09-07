@@ -41,24 +41,26 @@ class Tank extends Model
         $percentageMassCapacity = ($this->biomass / $this->capacity) * 100;
 
         // Calculate growth rate of algae using farm-specific lux and temperature
-        $growthRate = ($farm->lux - 1 / 40) * ($farm->temperature -1 / 40) * ($this->nutrient_level / 100) * ($this->co2_level);
+        $growthRate = (($farm->lux )/ 40) * (($farm->temp) / 40) * ($this->nutrient_level / 100) * ($this->co2_level);
         $growthRate = $growthRate * (1 - $percentageMassCapacity / 100);
 
         // Calculate total mass of algae in the tank
-        $totalAlgaeMass = $this->biomass + $growthRate;
+        $totalAlgaeMass = ($this->biomass + $growthRate);
 
         // Calculate co2 reduction rate
-        $co2ReductionRate = ($this->co2_level - ($this->co2_level- ($this->biomass *0.001))/$this->co2_level); // Example reduction rate
+        $co2ReductionRate = -(($this->co2_level - ($this->biomass * 0.01 * $this->co2_level))/$this->co2_level); // Example reduction rate
 
         // Update tank attributes
         $this->biomass = $totalAlgaeMass;
-        $this->co2_level -= ($this->biomass * 0.001);
+        $this->co2_level += $co2ReductionRate;
 
         // Calculate nutrient reduction rate
-        $nutrientReductionRate =  ($this->nutrient_level - ($this->nutrient_level- ($this->biomass *0.001))/$this->nutrient_level); // Example reduction rate
+        $nutrientReductionRate =  -($this->nutrient_level - ($this->nutrient_level *$this->biomass *0.01))/$this->nutrient_level; // Example reduction rate
 
         // Update tank attributes
-        $this->nutrient_level -= ($this->biomass * 0.001);
+        $this->nutrient_level += $nutrientReductionRate;
+
+        
 
         // Save tank changes
         $this->save();

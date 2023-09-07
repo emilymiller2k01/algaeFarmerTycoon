@@ -16,27 +16,16 @@ const PowerSection = ({game, selectedFarmId, expanded = false}: PowerSectionProp
     const solar = powers.find((power) => power.type === PowerTypes.solar)?.mw || 0;
     const wind = powers.find((power) => power.type === PowerTypes.wind)?.mw || 0;
     const gas = powers.find((power) => power.type === PowerTypes.gas)?.mw || 0;
-    const [isTask5Completed, setIsTask5Completed] = useState(researchTasks.some(task => task.id === 5 && task.completed));
+    const isTask5Completed = calculateIsTask5Completed(researchTasks);
 
+    function calculateIsTask5Completed(researchTasks) {
+        // Find the "Renewable Energies" task by name
+        const task5 = researchTasks.find((task) => task.title === 'Renewable Energies');
+    
+        // Check if task 5 exists and is complete
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch(`/game/${game.id}/research-tasks/completed`);
-                if (!response.ok) {
-                    throw new Error(`Network response was not ok: ${response.statusText}`);
-                }
-                const data = await response.json();
-
-                // Assuming the server returns an array of researched technologies
-                setIsTask5Completed(data);
-            } catch (error) {
-                console.error("Error fetching researched technologies:", error);
-            }
-        };
-
-        fetchData();
-    }, [game.id]);
+        return task5 ? task5.completed : false;
+      }
 
     const purchaseEnergy = (powerType: string) => {
         router.post(`/game/${initialGame.id}/farm/${initialGame.selected_farm_id}/purchaseEnergy`, {
@@ -56,7 +45,7 @@ const PowerSection = ({game, selectedFarmId, expanded = false}: PowerSectionProp
                 </p>
             </div>
                 {isTask5Completed && (
-                    <>
+                    <div>
                     <button onClick={() => {purchaseEnergy("solar")}}>
                         <div
                             className="flex flex-col gap-1 border px-3 py-1 border-green-dark rounded-lg w-[148px]">
@@ -85,21 +74,20 @@ const PowerSection = ({game, selectedFarmId, expanded = false}: PowerSectionProp
                             <WindSVG className="mx-auto"/>
                         </div>
                     </button>
-                    </>
+                    </div>
                 )}
             <button onClick={() => {purchaseEnergy("gas")}}>
-
-            <div className="flex flex-col gap-1 border px-3 py-1 border-green-dark rounded-lg w-[148px]">
-                <div className="flex w-full justify-between">
-                    <p className="text-green font-semibold text-2xl">
-                        Gas
-                    </p>
-                    <p className="text-green font-semibold text-2xl">
-                        {gas}
-                    </p>
+                <div className="flex flex-col gap-1 border px-3 py-1 border-green-dark rounded-lg w-[148px]">
+                    <div className="flex w-full justify-between">
+                        <p className="text-green font-semibold text-2xl">
+                            Gas
+                        </p>
+                        <p className="text-green font-semibold text-2xl">
+                            {gas}
+                        </p>
+                    </div>
+                    <GasSVG className="mx-auto"/>
                 </div>
-                <GasSVG className="mx-auto"/>
-            </div>
             </button>
         </div>
     )

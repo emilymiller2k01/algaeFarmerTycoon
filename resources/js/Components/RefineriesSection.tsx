@@ -9,7 +9,7 @@ import {GameProps, Produce, HomeProps} from "../Pages/Game";
 import {router, usePage} from "@inertiajs/react";
 import { PageProps } from '../types';
 
-const RefineriesSection = ({ game, selectedFarmId } : PageProps<RefineriesSectionProps>) => {
+const RefineriesSection = ({ game, selectedFarmId } : RefineriesSectionProps) => {
     const {refineries} = usePage<{refineries:Refinery[]}>().props
 
     console.log('props', usePage().props); // Log the entire props object

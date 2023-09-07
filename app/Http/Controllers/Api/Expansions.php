@@ -45,8 +45,8 @@ class Expansions extends Controller
             if ($game->money >= $selectedLight->cost && $game->mw >= $selectedLight->mw) {
                 //return "hello";
                 // Deduct the cost of the light from the game's money and MW
-                $game->decrement('money', $selectedLight->cost);
-                $game->decrement('mw', $selectedLight->mw);
+                $game->money -= $selectedLight->cost;
+                $game->mw = $game->mw - $selectedLight->mw;
 
                 // Add the light's lux to the farm's lux
                 $selectedFarm->increment('lux', $selectedLight->lux);
@@ -57,6 +57,7 @@ class Expansions extends Controller
 
                 // Associate the light with the selected farm
                 $selectedFarm->lights()->attach($selectedLight->id);
+
             }
         } catch (ModelNotFoundException $e){
             return response("Game Not Found", 404);
@@ -162,7 +163,8 @@ class Expansions extends Controller
             // Iterate over each tank and update its nutrient level if it's not already maxed.
             $tanksToUpdate = $tanks->where('nutrient_level', '<', 100);
             $tanksToUpdate->each(function ($tank) {
-                $tank->update(['nutrient_level' => 100]); // Assuming 100 is the maximum nutrient level
+                $tank->update(['nutrient_level' => 100]);
+                $tank->save(); // Assuming 100 is the maximum nutrient level
             });
 
 

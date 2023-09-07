@@ -104,7 +104,9 @@ export type HomeProps = {
     powers: Power[];
 }
 
-function Home ({initialGame, tanks, farms, researchTasks, refineries, powers}: HomeProps){
+function Home (props: HomeProps){
+
+    const {initialGame, tanks, farms, researchTasks, refineries, powers, productionData} = props;
 
     const [game, setGame] = useState(initialGame);
     console.log('refineries', refineries);
@@ -120,7 +122,7 @@ function Home ({initialGame, tanks, farms, researchTasks, refineries, powers}: H
             <div className="flex w-full min-h-full">
                 <div className="flex flex-col w-1/4 h-full">
                     <div className="h-[60vh]">
-                        <ProductionSection />
+                        <ProductionSection {...props}/>
                     </div>
                     <div className="h-[40vh]">
                         <ExpansionsSection />
