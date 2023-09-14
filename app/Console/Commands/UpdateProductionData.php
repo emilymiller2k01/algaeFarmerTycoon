@@ -1,30 +1,41 @@
 <?php
 
+// app/Console/Commands/UpdateProductionData.php
+
+
 namespace App\Console\Commands;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Console\Command;
+use App\Models\Game; // Make sure to import the Game model
+use App\Events\ProductionDataUpdated;
 
 class UpdateProductionData extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'app:update-production-data';
+    protected $signature = 'app:update-game-state {game_id}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Command description';
+    protected $description = 'Update production data';
 
-    /**
-     * Execute the console command.
-     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     public function handle()
     {
-        //
+        try {
+            $game_id = $this->argument('game_id');
+            // Retrieve the game_id argument
+            $game = Game::findOrFail($game_id);
+            
+            
+            // Return 0 on success
+            return 0;
+        } catch (\Exception $e) {
+            
+            // Return 1 on failure
+            return 1;
+        }
     }
 }
+

@@ -25,9 +25,9 @@ const initWebSocket = (): void => {
     });
 
     // Example listener
-    window.Echo.channel('some-channel')
-        .listen('.SomeEvent', (data: any) => {  // Define the type of data if known
-            console.log(data);
+    window.Echo.channel('production-data')
+        .listen('.ProductionDataUpdated', (event) => {  // Define the type of data if known
+            console.log(event.data);
         });
 }
 

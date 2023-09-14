@@ -8,6 +8,8 @@ import ProductionSection from '../Components/ProductionSection';
 import { logs, production } from '../data/props';
 //import {Tank} from "@/types";
 import { InertiaApp } from '@inertiajs/inertia-react';
+import { Tank } from '../types';
+import { Power } from '../types';
 
 export type GameProps = {
     id: number;
@@ -18,26 +20,7 @@ export type GameProps = {
     mw_cost: number;
     selected_farm_id: number;
 }
-export type Power = {
-    type: PowerTypes,
-    startup_cost: number, 
-    ongoing_cost: number,
-    mw: number,
-}
 
-export enum PowerTypes{
-    gas, 
-    solar, 
-    wind,
-}
-
-export type Tank = {
-    farm_id: number
-    nutrient_level: number
-    co2_level: number
-    biomass: number
-    mw: number
-}
 
 export enum Produce{
     biofuel, 

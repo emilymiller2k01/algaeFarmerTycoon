@@ -12,7 +12,8 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\getProductionData;
 use App\Models\ResearchTasks;
-//use App\Helpers\researchTasksHelper;
+use App\Events\ProductionDataUpdated;
+use Illuminate\Support\Facades\Artisan;
 
 
 class GameController extends Controller
@@ -43,8 +44,6 @@ class GameController extends Controller
         }
 
         $games = $user->games->toArray();
-
-        dd($games);
 
         return inertia('Landing', ['auth' => auth()->user(), 'games' => $games]);
     }
@@ -186,7 +185,8 @@ class GameController extends Controller
     }
 
     //show a game
-    public function show(Game $game){
+    public function show(Game $game)
+    {
         $this->authorize('view', $game);
         $refineries = [];
         $powers = [];
@@ -196,15 +196,19 @@ class GameController extends Controller
         }
 
         
+        // Update the production data and broadcast the event
+        event(new ProductionDataUpdated($game));
+
         return Inertia::render('Game', [
             'initialGame' => $game,
             'tanks' => $game->selectedFarm ? $game->selectedFarm->tanks : [],
             'farms' => $game->farms,
-            'productionData' => getProductionData($game), // Send prod data to frontend here
+            'productionData' => [], // Send prod data to frontend here
             'researchTasks' => $game->researchTasks,
             'refineries' => $refineries,
             'powers' => $powers,
         ]);
+
     }
 
     //show the form for editing the game name

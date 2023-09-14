@@ -10,14 +10,16 @@ import RefineriesSection from "./RefineriesSection";
 import { HomeProps } from '../Pages/Game'
 import { router, usePage} from '@inertiajs/react';
 import axios from 'axios';
+import { TankContext } from '../TankContext';
+import { text } from 'stream/consumers';
+import { PowerContext } from '../PowerContext';
+
 
 const MultiSection = () => {
-    const { productionData, initialGame, researchTasks} = usePage<HomeProps>().props
+    const { productionData, initialGame, researchTasks, tanks, powers} = usePage<HomeProps>().props
     const [currentTab, setCurrentTab] = useState(0);
     const automatedTasks = researchTasks.filter(task => task.automation && task.completed);
     const [isTask10Completed, setIsTask10Completed] = useState(researchTasks.some(task => task.title === "Adding Refineries" && task.completed));
-
-
 
     const handleCompleteTask = async (taskId: number, taskTitle: string) => {
         router.post(`/game/${initialGame.id}/research-tasks/complete/${taskId}`, {}, {
@@ -52,7 +54,9 @@ const MultiSection = () => {
                 <div className=" py-4 h-full flex-grow flex flex-col bg-black">
                     <div className="flex flex-col gap-4 pb-20 px-4 flex-grow overflow-y-auto ">
                         <PowerSection game={initialGame} selectedFarmId={initialGame.selected_farm_id} expanded />
-                        <TankContainer game={initialGame} selectedFarmId={initialGame.selected_farm_id} />
+                        <TankContext.Provider value={{tanks: tanks}}>
+                            <TankContainer game={initialGame} selectedFarmId={initialGame.selected_farm_id} />
+                        </TankContext.Provider>
                         <AutomationSection game={initialGame} tasks={automatedTasks} />
                         {isTask10Completed && <RefineriesSection game={initialGame} selectedFarmId={initialGame.selected_farm_id} />}
                     </div>

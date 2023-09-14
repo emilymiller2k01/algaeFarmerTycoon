@@ -151,23 +151,21 @@ class Expansions extends Controller
             $tanks = $farm->tanks;
 
             // Check if the player has enough money to add nutrients to all tanks and if all tanks are not already maxed.
-            $totalCost = $nutrientCost * $tanks->where('nutrient_level', '<', 100)->count();
+            $totalCost = $nutrientCost * $tanks->where('nutrient_level', '<', 90)->count();
             if ($game->money < $totalCost) {
                 $game->money = $game->money;
+            } else {
+                // If the player has enough money, deduct the cost.
+                $game->money -= $totalCost;
+                $game->save();
+
+                // Iterate over each tank and update its nutrient level if it's not already maxed.
+                $tanksToUpdate = $tanks->where('nutrient_level', '<', 90);
+                $tanksToUpdate->each(function ($tank) {
+                    $tank->nutrient_level = 100;
+                    $tank->save(); // Assuming 100 is the maximum nutrient level
+                });
             }
-
-            // If the player has enough money, deduct the cost.
-            $game->money -= $totalCost;
-            $game->save();
-
-            // Iterate over each tank and update its nutrient level if it's not already maxed.
-            $tanksToUpdate = $tanks->where('nutrient_level', '<', 100);
-            $tanksToUpdate->each(function ($tank) {
-                $tank->update(['nutrient_level' => 100]);
-                $tank->save(); // Assuming 100 is the maximum nutrient level
-            });
-
-
         } catch (ModelNotFoundException $e) {
             return Inertia::render('Error', [
                 'message' => 'Resource Not Found',
@@ -189,32 +187,31 @@ class Expansions extends Controller
             $farm = Farm::findOrFail($farm_id);
             $game = Game::findOrFail($game_id);
 
-
             // Define cost to maximize CO2 for a tank.
             $co2Cost = 50; // Example value
-
             // Fetch all tanks associated with the farm.
             $tanks = $farm->tanks;
 
-
             // Check if the player has enough money to add CO2 to all tanks and if all tanks are not already maxed.
-            $totalCost = $co2Cost * $tanks->where('co2_level', '<', 100)->count();
+            $totalCost = $co2Cost * $tanks->where('co2_level', '<', 90)->count();
 
             if ($game->money < $totalCost) {
-
                 $game->money = $game->money;
+            } else {
+                // If the player has enough money, deduct the cost.
+                $game->money -= $totalCost;
+                $game->save();
 
+                // Iterate over each tank and update its CO2 level if it's not already maxed.
+                $tanksToUpdate = $tanks->where('co2_level', '<', 90);
+                $tanksToUpdate->each(function ($tank) {
+                    $tank->co2_level = 100; 
+                    $tank->save();// Assuming 100 is the maximum CO2 level
+                });
+                dd($tank);
             }
-
-            // If the player has enough money, deduct the cost.
-            $game->money -= $totalCost;
-            $game->save();
-
-            // Iterate over each tank and update its CO2 level if it's not already maxed.
-            $tanksToUpdate = $tanks->where('co2_level', '<', 100);
-            $tanksToUpdate->each(function ($tank) {
-                $tank->update(['co2_level' => 100]); // Assuming 100 is the maximum CO2 level
-            });
+            dd($tank);
+            
 
         } catch (ModelNotFoundException $e) {
             return Inertia::render('Error', [
@@ -283,28 +280,21 @@ class Expansions extends Controller
             $totalHarvestedAlgae = 0;
             $totalEarned = 0;
 
-            // Collecting updated tanks to pass them to the front end
-            $updatedTanks = [];
-
             foreach ($tanks as $tank) {
-                $harvestedAlgae = $tank->biomass * 0.9; // 90% of the algae
-                $totalHarvestedAlgae += $harvestedAlgae;
-
-                // Convert grams to kilograms and calculate earnings
-                $harvestedAlgaeInKg = $harvestedAlgae / 1000;
-                $totalEarned += $harvestedAlgaeInKg * 30; // £30 per kg
-
-                // Update tank biomass
-                $tank->biomass *= 0.05; // Remaining 5%
+                $harvestedAlgae = $tank->biomass - ($tank->capacity *0.1);
+                if ($harvestedAlgae > 0){
+                    $tank->biomass = $tank->capacity * 0.1;
+                    $totalHarvestedAlgae += $harvestedAlgae;
+                    // Convert grams to kilograms and calculate earnings
+                    $harvestedAlgaeInKg = $harvestedAlgae / 1000;
+                    $totalEarned += $harvestedAlgaeInKg * 70; // £70 per kg
+                }
                 $tank->save();
-
-                // Add updated tank to the list
-                $updatedTanks[] = $tank;
             }
 
             // Add earnings to game money
             $game = $farm->game;
-            $game->increment('money', $totalEarned);
+            $game->money += $totalEarned;
 
             $farm->save();
             $game->save();

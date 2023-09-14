@@ -33,7 +33,7 @@
         "@mantine/hooks": "^6.0.19",
         "@mui/material": "^5.14.5",
         "@types/react-dom": "^18.2.7",
-        "laravel-echo": "^1.15.2",
+        "laravel-echo": "^1.15.3",
         "pusher-js": "^8.3.0",
         "react-redux": "^8.1.2",
         "redux": "^4.2.1",

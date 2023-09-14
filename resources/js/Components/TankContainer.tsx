@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Tank from './Tank';
 import { GameProps } from '../Pages/Game';
 import axios from "axios";
 import {router, usePage} from "@inertiajs/react";
 import { PageProps } from '../types';
+import { TankContext } from '../TankContext';
 
 type Tank = {
     id:number
@@ -15,7 +16,13 @@ type Tank = {
 }
 const TankContainer = ({ game, selectedFarmId }: TankContainerProps) => {
 
-    const {tanks} = usePage<{tanks:Tank[]}>().props
+    const { tanks } = useContext(TankContext);
+
+    console.log(
+        "tanks",
+        tanks,
+    )
+
 
     return (
         <div className="px-4 pb-4 pt-2 border-2 border-green-dark rounded-[10px] bg-transparent">

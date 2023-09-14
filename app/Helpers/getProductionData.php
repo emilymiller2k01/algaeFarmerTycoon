@@ -11,7 +11,7 @@ if (! function_exists('getProductionData')){
         $luxForSelectedFarm = $selectedFarm->lux;
         $tempForSelectedFarm = $selectedFarm->temp;
 
-        $algaeHarvest = 2;
+        //$algaeHarvest = 2;
 
         //$moneyRate = $algaeHarvest * 10;
         //$moneyRate = 1;
@@ -23,15 +23,16 @@ if (! function_exists('getProductionData')){
         $nutrientsAmount =($productionMetrics['nutrientsAmount']);
         $nutrientsRate = $productionMetrics['nutrientsRate'];
         $co2Amount = $productionMetrics['co2Amount'];
-        $co2Rate = $productionMetrics['co2Rate'] /100;
+        $co2Rate = $productionMetrics['co2Rate'];
+        $gr = $productionMetrics['gr'];
 
 
         return [
-            "farmData" => $game->farms,
             "moneyRate" => 1,
             "algaeRate" => $averageAlgaeRate,
             "algaeMass" => $biomass,
             "algaeHarvest" => 10,
+            "gr" => $gr,
             "tanks" => getTankCount($game),
             "farms" => $game->farms->count(),
             "nutrientsAmount" => $nutrientsAmount,
@@ -72,21 +73,6 @@ if (! function_exists('calculateTankMetrics')){
     }
 }
 
-
-
-if (!function_exists('calculateAlgaeGrowthRate')) {
-    function calculateAlgaeGrowthRate($tank, $farm)
-    {
-        $percentageMassCapacity = ($tank->biomass / $tank->capacity) * 100;
-
-        // Calculate algae growth rate based on factors
-        $growthRate = ($tank->co2_level / 100) * ($tank->nutrient_level / 100) * (50 / $farm->lux) * (30 / $farm->temp);
-        $growthRate = $growthRate * (1 - $percentageMassCapacity / 100);
-
-        return $growthRate;
-    }
-}
-
 if (!function_exists('calculateProductionMetrics')) {
     function calculateProductionMetrics($game)
     {
@@ -100,13 +86,16 @@ if (!function_exists('calculateProductionMetrics')) {
         $co2Rate = 0;
         $algaeRate = 0;
         $biomass = 0;
+        $gr = 0;
 
         foreach($tankMetrics as $metric){
             $biomass += $metric['biomass'];
+            $algaeRate += $metric['algaeRate'];
             $nutrientsAmount += $metric['nutrientLevel'];
             $nutrientsRate += $metric['nutrientRate'];
-            $co2Rate += $metric['co2Level'];
-            $co2Amount += $metric['co2Rate'];
+            $co2Rate += $metric['co2Rate'];
+            $co2Amount += $metric['co2Level'];
+            $gr = $metric['gr'];
         }
 
 
@@ -122,11 +111,12 @@ if (!function_exists('calculateProductionMetrics')) {
         }
 
         return [
+            'gr' => $gr,
             'nutrientsAmount' => $nutrientsAmount / $tankCount,
             'nutrientsRate' => $nutrientsRate / $tankCount,
             'co2Amount' => $co2Amount / $tankCount,
             'co2Rate' => $co2Rate / $tankCount,
-            'algaeRate' => $co2Amount / $tankCount,
+            'algaeRate' => $algaeRate / $tankCount,
             'biomass' => $biomass,
         ];
     }

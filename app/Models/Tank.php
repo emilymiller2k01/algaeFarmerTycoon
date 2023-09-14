@@ -18,14 +18,6 @@ class Tank extends Model
         'mw'
     ];
 
-    protected $attributes = [
-        'capacity' => 1000,
-        'nutrient_level' => 100,
-        'co2_level' => 100,
-        'biomass' => 0.1,
-        'mw' => 1, 
-    ];
-
     public function farms()
     {
         return $this->belongsTo(Farm::class);
@@ -36,37 +28,42 @@ class Tank extends Model
     {
         // Access the associated farm to get lux and temperature values
         $farm = Farm::findOrFail($this->farm_id);
+        //calculate temp growth rate 
+        $temp_gr = (1 - (($farm->temo -25)^2)/7) *(exp(1))^(0.001*$farm->temp);
+        //calculate nutrient growth rate 
+        $nutrient_gr = ($this->nutrient_level)/((($this->nutrient_level)^2)*0.5 + ($this->nutrient_level) + 0.5);
+        //calculate co2 growth rate 
+        $co2_gr = ($this->co2_level)/((($this->co2_level)^2)*0.5 + $this->co2_level + 0.5);
+        //calculate light growth rate 
+        $light_gr = (0.9*($farm->lux)/100)/(0.5 + ($farm->lux)/100);
+        //calculating average growth rate 
+        $gr = ($temp_gr + $nutrient_gr + $co2_gr + $light_gr)/4;
+        //calculating capacity 
+        $b_1 = $gr * $this->biomass *(($this->capacity - $this->biomass)/$this->capacity);
+        $algaeProductionRate = ((($b_1 - $this->biomass)/$b_1)*100);
+        $this->biomass = $b_1;
 
-        // Calculate percentage mass capacity
-        $percentageMassCapacity = ($this->biomass / $this->capacity) * 100;
+        $co2ReductionRate = $this->co2_level != 0 ? -(($this->co2_level - ($this->co2_level - ($this->biomass * 0.001))) / $this->co2_level) : 0;
+        $nutrientReductionRate = $this->nutrient_level != 0 ? -(($this->nutrient_level - ($this->nutrient_level - ($this->biomass * 0.002))) / $this->nutrient_level) : 0;
 
-        // Calculate growth rate of algae using farm-specific lux and temperature
-        $growthRate = (($farm->lux )/ 40) * (($farm->temp) / 40) * ($this->nutrient_level / 100) * ($this->co2_level);
-        $growthRate = $growthRate * (1 - $percentageMassCapacity / 100);
-
-        // Calculate total mass of algae in the tank
-        $totalAlgaeMass = ($this->biomass + $growthRate);
-
-        // Calculate co2 reduction rate
-        $co2ReductionRate = -(($this->co2_level - ($this->biomass * 0.01 * $this->co2_level))/$this->co2_level); // Example reduction rate
-
-        // Update tank attributes
-        $this->biomass = $totalAlgaeMass;
-        $this->co2_level += $co2ReductionRate;
-
-        // Calculate nutrient reduction rate
-        $nutrientReductionRate =  -($this->nutrient_level - ($this->nutrient_level *$this->biomass *0.01))/$this->nutrient_level; // Example reduction rate
-
-        // Update tank attributes
-        $this->nutrient_level += $nutrientReductionRate;
-
-        
+        $newNutrientLevel = $this->nutrient_level - ($this->biomass * 0.002);
+        $newCo2Level = $this->co2_level - ($this->biomass * 0.001);
+    
+        // Check if the new values are negative, and if so, set them to zero
+        $newNutrientLevel = max(0, $newNutrientLevel);
+        $newCo2Level = max(0, $newCo2Level);
+    
+        // Update the nutrient_level and co2_level
+        $this->nutrient_level = $newNutrientLevel;
+        $this->co2_level = $newCo2Level;
 
         // Save tank changes
         $this->save();
 
         return [
-            'biomass' => $totalAlgaeMass,
+            'gr' => $gr,
+            'biomass' => $this->biomass,
+            'algaeRate' => $algaeProductionRate,
             'co2Rate' => $co2ReductionRate,
             'co2Level' => $this->co2_level,
             'nutrientRate' => $nutrientReductionRate,
