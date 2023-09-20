@@ -1,11 +1,13 @@
 <?php
 
 use App\Models\Farm;
+use App\Models\Game;
 
 if (! function_exists('getProductionData')){
-    function getProductionData($game) {
+    function getProductionData(Game $game) {
 
     //only want to run this bit when the selected_farm_id of the game is changed ideally 
+
         $selectedFarmId = $game->selected_farm_id;
         $selectedFarm = Farm::findOrFail($selectedFarmId);
         $luxForSelectedFarm = $selectedFarm->lux;

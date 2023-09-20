@@ -194,16 +194,15 @@ class GameController extends Controller
             $refineries = array_merge($refineries, $farm->refineries->toArray());
             $powers = array_merge($powers, $farm->powers->toArray());
         }
-
         
-        // Update the production data and broadcast the event
-        event(new ProductionDataUpdated($game));
+        // Call the helper function to get production data
+        $productionData = getProductionData($game);
 
         return Inertia::render('Game', [
             'initialGame' => $game,
             'tanks' => $game->selectedFarm ? $game->selectedFarm->tanks : [],
             'farms' => $game->farms,
-            'productionData' => [], // Send prod data to frontend here
+            'productionData' => $productionData,
             'researchTasks' => $game->researchTasks,
             'refineries' => $refineries,
             'powers' => $powers,

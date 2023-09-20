@@ -1,19 +1,28 @@
-import React from 'react'
+import React, { useState } from 'react';
 import BasketSVG from "./Icons/BasketSVG";
 import BubblesSVG from "./Icons/BubblesSVG";
 import RefinarySVG from "./Icons/RefinarySVG";
 import SettingsSVG from "./Icons/SettingsSVG";
 import TestTubeSVG from "./Icons/TestTubeSVG";
 import TrashSVG from "./Icons/TrashSVG";
-import {GameProps, Produce, HomeProps} from "../Pages/Game";
-import {router, usePage} from "@inertiajs/react";
+import { GameProps, Produce, HomeProps, ResearchTask } from "../Pages/Game";
+import { usePage } from "@inertiajs/react";
 import { PageProps } from '../types';
+import { useDisclosure } from '@mantine/hooks';
+import { Modal, Button } from '@mantine/core';
+import RefineryPopUp from './tooltips/refineryPopUp';
 
-const RefineriesSection = ({ game, selectedFarmId } : RefineriesSectionProps) => {
-    const {refineries} = usePage<{refineries:Refinery[]}>().props
+const RefineriesSection = () => {
+    const { refineries, researchTasks } = usePage<PageProps<HomeProps>>().props;
+    const [isPopupOpen, setPopupOpen] = useState(false);
 
-    console.log('props', usePage().props); // Log the entire props object
-    console.log('refineries', refineries);
+    // Check if the "Algae By-products" task has been completed
+    const isAlgaeByProductsCompleted = researchTasks.find(task => task.title === 'Algae By-products')?.completed || false;
+
+    const displayModal = () => {
+        setPopupOpen(!isPopupOpen);
+    }
+
 
     return (
         <div className="px-4 pb-4 pt-2 border-2 border-green-dark rounded-[10px] bg-transparent">
@@ -26,16 +35,20 @@ const RefineriesSection = ({ game, selectedFarmId } : RefineriesSectionProps) =>
                         <RefineryComponent key={refinery.id} {...refinery} />
                     ))}
                 </div>
-            
-                <div className="flex flex-col border-2 border-green-dark rounded-md">
-                    <SettingsSVG className="my-auto mx-3 " />
-                </div>
+                    <Button onClick={() => displayModal()}>
+                        {isAlgaeByProductsCompleted && (
+                            <div className="flex flex-col border-2 border-green-dark rounded-md">
+                                <SettingsSVG className="my-auto mx-3" />
+                            </div>
+                        )}
+                    </Button>
+                    {isPopupOpen && <RefineryPopUp show={isPopupOpen} handleClose={displayModal} />}
             </div>
         </div>
-    )
+    );
 };
 
-const RefineryComponent = ({ id, produce, mw }) => {
+const RefineryComponent = ({ id, produce, mw }: Refinery) => {
     return (
         <div className="flex flex-col border-2 border-green-dark rounded-md">
             <RefinarySVG className="mx-auto" />
@@ -45,13 +58,9 @@ const RefineryComponent = ({ id, produce, mw }) => {
 
 export default RefineriesSection;
 
+
 type Refinery = {
     id: number;
     produce: Produce;
-    mw: Number;
-}
-
-export type RefineriesSectionProps = {
-    game: GameProps;
-    selectedFarmId: number;
+    mw: number;
 }

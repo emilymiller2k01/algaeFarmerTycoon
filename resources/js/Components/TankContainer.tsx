@@ -6,7 +6,7 @@ import {router, usePage} from "@inertiajs/react";
 import { PageProps } from '../types';
 import { TankContext } from '../TankContext';
 
-type Tank = {
+export type TankType = {
     id:number
     farm_id: string
     nutrient_level: number

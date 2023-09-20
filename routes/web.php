@@ -11,6 +11,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\ProductionDataController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -83,5 +84,7 @@ Route::get('/game/{game_id}/research-tasks/completed', [ResearchTaskController::
 Route::post('/game/{game_id}/research-tasks/complete/{taskId}', [ResearchTaskController::class, 'completeResearch']);
 Route::get('/game/{game_id}/research-tasks/completed-automation', [ResearchTaskController::class, 'showCompletedAutomationTasks'])->name('research-tasks.automation.completed');
 
+
+Route::get('game/{game_id}/production-data', [ProductionDataController::class, 'index']);
 
 require __DIR__.'/auth.php';

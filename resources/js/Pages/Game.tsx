@@ -7,8 +7,8 @@ import MultiSection from '../Components/MultiSection';
 import ProductionSection from '../Components/ProductionSection';
 import { logs, production } from '../data/props';
 //import {Tank} from "@/types";
-import { InertiaApp } from '@inertiajs/inertia-react';
-import { Tank } from '../types';
+import { usePage } from '@inertiajs/react';
+import { PageProps, Tank } from '../types';
 import { Power } from '../types';
 
 export type GameProps = {
@@ -30,6 +30,7 @@ export enum Produce{
 }
 
 export type Refinery = {
+    id: number
     produce: Produce;
     mw: number
 }
@@ -41,7 +42,7 @@ export type Farm = {
 }
 
 
-type ProductionData = {
+export type ProductionData = {
     success?: boolean;
     currentMoney?: number;
     farmData?: Array<any>;
@@ -87,9 +88,9 @@ export type HomeProps = {
     powers: Power[];
 }
 
-function Home (props: HomeProps){
+function Home() {
 
-    const {initialGame, tanks, farms, researchTasks, refineries, powers, productionData} = props;
+    const {initialGame, tanks, farms, researchTasks, refineries, powers} = usePage<PageProps<HomeProps>>().props;
 
     const [game, setGame] = useState(initialGame);
     console.log('refineries', refineries);
@@ -100,12 +101,14 @@ function Home (props: HomeProps){
        setGame(updatedGame);
     }
 
+    
+
     return (
         <main className="flex min-h-screen max-h-screen min-w-full overflow-hidden max-w-full bg-grey-dark">
             <div className="flex w-full min-h-full">
                 <div className="flex flex-col w-1/4 h-full">
                     <div className="h-[60vh]">
-                        <ProductionSection {...props}/>
+                        <ProductionSection />
                     </div>
                     <div className="h-[40vh]">
                         <ExpansionsSection />

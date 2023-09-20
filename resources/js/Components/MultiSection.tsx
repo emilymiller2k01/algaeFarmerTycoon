@@ -2,17 +2,13 @@ import React, { useState, useEffect } from 'react';
 import SettingsSVG from "./Icons/SettingsSVG";
 import { achievements, research } from "../data/props";
 import InfoBox from "./InfoBox";
-import Tank from "./Tank";
 import TankContainer from "./TankContainer";
 import PowerSection from "./PowerSection";
 import AutomationSection from "./AutomationSection";
 import RefineriesSection from "./RefineriesSection";
 import { HomeProps } from '../Pages/Game'
 import { router, usePage} from '@inertiajs/react';
-import axios from 'axios';
 import { TankContext } from '../TankContext';
-import { text } from 'stream/consumers';
-import { PowerContext } from '../PowerContext';
 
 
 const MultiSection = () => {
@@ -53,12 +49,12 @@ const MultiSection = () => {
             {(currentTab === 0) &&
                 <div className=" py-4 h-full flex-grow flex flex-col bg-black">
                     <div className="flex flex-col gap-4 pb-20 px-4 flex-grow overflow-y-auto ">
-                        <PowerSection game={initialGame} selectedFarmId={initialGame.selected_farm_id} expanded />
+                        <PowerSection />
                         <TankContext.Provider value={{tanks: tanks}}>
                             <TankContainer game={initialGame} selectedFarmId={initialGame.selected_farm_id} />
                         </TankContext.Provider>
                         <AutomationSection game={initialGame} tasks={automatedTasks} />
-                        {isTask10Completed && <RefineriesSection game={initialGame} selectedFarmId={initialGame.selected_farm_id} />}
+                        {isTask10Completed && <RefineriesSection />}
                     </div>
                 </div>
             }

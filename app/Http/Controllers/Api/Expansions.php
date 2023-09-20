@@ -194,7 +194,6 @@ class Expansions extends Controller
 
             // Check if the player has enough money to add CO2 to all tanks and if all tanks are not already maxed.
             $totalCost = $co2Cost * $tanks->where('co2_level', '<', 90)->count();
-
             if ($game->money < $totalCost) {
                 $game->money = $game->money;
             } else {
@@ -208,9 +207,7 @@ class Expansions extends Controller
                     $tank->co2_level = 100; 
                     $tank->save();// Assuming 100 is the maximum CO2 level
                 });
-                dd($tank);
             }
-            dd($tank);
             
 
         } catch (ModelNotFoundException $e) {

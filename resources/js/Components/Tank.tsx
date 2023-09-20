@@ -1,7 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { PageProps } from '../types';
+import { useInterval } from '@mantine/hooks';
+import { TankType } from './TankContainer';
+import { HomeProps, ProductionData } from '../Pages/Game';
+import { usePage } from '@inertiajs/react';
 
-const Tank = ({ biomass, co2_level, nutrient_level }) => {
+type TankProps = Pick<TankType, "biomass" | "co2_level" | "nutrient_level">
+
+const Tank = ({ biomass, co2_level, nutrient_level }: TankProps) => {
+
+    
+
+    const reloadData = async () => {
+      try {
+        //get the tank props to reload every second  
+        
+      } catch (error) {
+        console.error('Error fetching production data:', error);
+      }
+    };
+      
+    const { start, stop } = useInterval(reloadData, 1000);
+  
+    useEffect(() => {
+      start();
+    }, [])
+
     const biomassProgress = (biomass / 1000) * 100;
+    //this only shows when the tank is manually reloaded 
     console.log(
         biomassProgress,
         nutrient_level,

@@ -1,4 +1,3 @@
-import './bootstrap';
 import '../css/app.css';
 import React from 'react';
 
@@ -6,7 +5,6 @@ import { InertiaApp } from '@inertiajs/inertia-react';
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { PusherProvider } from "@harelpls/use-pusher";
 import Providers from './Providers';
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';

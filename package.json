@@ -29,6 +29,8 @@
         "@harelpls/use-pusher": "^7.2.1",
         "@inertiajs/inertia": "^0.11.1",
         "@inertiajs/inertia-react": "^0.8.1",
+        "@inertiajs/inertia-vue3": "^0.5.1",
+        "@inertiajs/progress": "^0.2.7",
         "@mantine/core": "^6.0.19",
         "@mantine/hooks": "^6.0.19",
         "@mui/material": "^5.14.5",

@@ -25,7 +25,7 @@ const initWebSocket = (): void => {
     });
 
     // Example listener
-    window.Echo.channel('production-data')
+    window.Echo.channel('production-data-channel')
         .listen('.ProductionDataUpdated', (event) => {  // Define the type of data if known
             console.log(event.data);
         });
