@@ -12,6 +12,7 @@ use App\Http\Controllers\GameController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ProductionDataController;
+use App\Http\Controllers\Api\TankController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -85,6 +86,7 @@ Route::post('/game/{game_id}/research-tasks/complete/{taskId}', [ResearchTaskCon
 Route::get('/game/{game_id}/research-tasks/completed-automation', [ResearchTaskController::class, 'showCompletedAutomationTasks'])->name('research-tasks.automation.completed');
 
 
+Route::get('game/{game_id}/tank/{tank_id}', [TankController::class, 'getValues']);
 Route::get('game/{game_id}/production-data', [ProductionDataController::class, 'index']);
 
 require __DIR__.'/auth.php';

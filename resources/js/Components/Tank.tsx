@@ -1,20 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { PageProps } from '../types';
+import { PageProps, Tank } from '../types';
 import { useInterval } from '@mantine/hooks';
-import { TankType } from './TankContainer';
-import { HomeProps, ProductionData } from '../Pages/Game';
+import { HomeProps } from '../Pages/Game';
 import { usePage } from '@inertiajs/react';
 
-type TankProps = Pick<TankType, "biomass" | "co2_level" | "nutrient_level">
+type TankProps = Pick<Tank, "id" | "biomass" | "co2_level" | "nutrient_level">
 
-const Tank = ({ biomass, co2_level, nutrient_level }: TankProps) => {
+const TankComponent = ({ id, biomass, co2_level, nutrient_level }: TankProps) => {
 
-    
+    const {tanks, initialGame} = usePage<PageProps<HomeProps>>().props;
+    const tank = tanks.find(t => t.id === id);
+
+    const [data, setData] = useState<Tank>(tank);
 
     const reloadData = async () => {
       try {
         //get the tank props to reload every second  
-        
+        fetch(`/game/${initialGame.id}/tank/${id}`).then((response) => {
+            console.log(response);
+            response.json().then(({tank: newData}) => {
+                console.log("newdata", newData);
+                setData(newData);
+            })
+        });
       } catch (error) {
         console.error('Error fetching production data:', error);
       }
@@ -26,10 +34,9 @@ const Tank = ({ biomass, co2_level, nutrient_level }: TankProps) => {
       start();
     }, [])
 
-    const biomassProgress = (biomass / 1000) * 100;
     //this only shows when the tank is manually reloaded 
     console.log(
-        biomassProgress,
+        biomass/10,
         nutrient_level,
         co2_level,
     )
@@ -38,17 +45,17 @@ const Tank = ({ biomass, co2_level, nutrient_level }: TankProps) => {
         <div className="relative">
             <div className="absolute top-[15px] left-0 p-2 flex flex-col justify-end h-[120px] w-[200px] gap-2">
                 <div className="h-full w-full rounded-full border overflow-hidden bg-grey-light border-green-dark text-green relative items-center justify-center">
-                    <div className="h-full bg-green-dark absolute left-0 items-center justify-center" style={{ width: `${biomassProgress}%`, borderRadius: '0 5px 5px 0' }}>
+                    <div className="h-full bg-green-dark absolute left-0 items-center justify-center" style={{ width: `${(data.biomass /10)}%`, borderRadius: '0 5px 5px 0' }}>
                     </div>
                     <span className="w-full text-center text-green z-10 absolute left-0">Biomass</span>
                 </div>
                 <div className="h-full w-full rounded-full border overflow-hidden bg-grey-light border-green-dark text-green relative items-center justify-center">
-                    <div className="h-full bg-yellow absolute left-0 z-0" style={{ width: `${nutrient_level}%`, borderRadius: '0 5px 5px 0' }}>
+                    <div className="h-full bg-yellow absolute left-0 z-0" style={{ width: `${data.nutrient_level}%`, borderRadius: '0 5px 5px 0' }}>
                     </div>
                         <span className="w-full text-center text-green z-10 absolute left-0">Nutrients</span>
                 </div>
                 <div className="h-full w-full rounded-full border relative overflow-hidden bg-grey-light border-green-dark text-green items-center justify-center">
-                    <div className="h-full bg-yellow absolute left-0 items-center justify-center " style={{ width: `${co2_level}%`, padding: '0 5px', borderRadius: '0 5px 5px 0' }}>
+                    <div className="h-full bg-yellow absolute left-0 items-center justify-center " style={{ width: `${data.co2_level}%`, padding: '0 5px', borderRadius: '0 5px 5px 0' }}>
                     </div>
                     <span className="w-full text-center text-green z-10 absolute left-0">CO2</span>
                 </div>
@@ -65,4 +72,4 @@ const Tank = ({ biomass, co2_level, nutrient_level }: TankProps) => {
     );
 };
 
-export default Tank;
+export default TankComponent;

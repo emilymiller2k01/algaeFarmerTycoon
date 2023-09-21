@@ -111,18 +111,21 @@ function Home() {
                         <ProductionSection />
                     </div>
                     <div className="h-[40vh]">
-                        <ExpansionsSection />
+                        <LogSection {...logs} />
                     </div>
                 </div>
                 <div className="flex flex-col w-1/2 h-full border-x-2 border-x-green">
                     <MultiSection />
                 </div>
                 <div className="flex flex-col w-1/4 h-full">
+                    <div className="h-[72vh]">
+                        <ExpansionsSection />
+                    </div>
+                    <h1 className="text-2xl text-green  flex px-8 py-6 bg-grey justify-between font-semibold">
+                        Farms
+                    </h1>
                     <div className="h-[45vh]">
                         <FarmsSection updateSelectedFarm={updateSelectedFarmId} />
-                    </div>
-                    <div className="h-[55vh]">
-                        <LogSection {...logs} />
                     </div>
                 </div>
             </div>

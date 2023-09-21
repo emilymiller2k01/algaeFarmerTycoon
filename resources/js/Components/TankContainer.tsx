@@ -1,19 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
 import Tank from './Tank';
 import { GameProps } from '../Pages/Game';
-import axios from "axios";
-import {router, usePage} from "@inertiajs/react";
-import { PageProps } from '../types';
 import { TankContext } from '../TankContext';
 
-export type TankType = {
-    id:number
-    farm_id: string
-    nutrient_level: number
-    co2_level: number
-    biomass: number
-    mw: number
-}
 const TankContainer = ({ game, selectedFarmId }: TankContainerProps) => {
 
     const { tanks } = useContext(TankContext);

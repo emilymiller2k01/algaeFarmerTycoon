@@ -22,4 +22,14 @@ class ProductionDataController extends Controller
             'initialGame' => $game,
         ], 200);
     }
+
+    public function makeByProducts(Request $request, $game_id){
+
+    }
+
+    public function autoHarvest(Request $request, $game_id){
+
+    }
+
+    
 }
