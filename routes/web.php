@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\TankController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\Api\RefineryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,16 +45,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
     // Game
-    Route::get('/game', function () {
-        return Inertia::render('Game', [
-            'canLogin' => Route::has('login'),
-            'canRegister' => Route::has('register'),
-            'laravelVersion' => Application::VERSION,
-            'phpVersion' => PHP_VERSION,
-        ]);
-    });
+    //Route::get('/game', function () {
+    //    return Inertia::render('Game', [
+    //        'canLogin' => Route::has('login'),
+    //        'canRegister' => Route::has('register'),
+    //        'laravelVersion' => Application::VERSION,
+    //        'phpVersion' => PHP_VERSION,
+    //    ]);
+    //});
+    //Route::get('/game/{game}', [GameController::class, 'show'])->name('games.show'); // Show a specific game
     Route::get('/game', [GameController::class, 'create']); // Display a form to create a new game
-    Route::get('/game/{game}', [GameController::class, 'show'])->name('games.show'); // Show a specific game
     Route::post('/game', [GameController::class, 'store']); // Create a new game
 
     // Profile
@@ -84,7 +85,9 @@ Route::post('/game/{game_id}/farm/{farm_id}/purchaseEnergy', [EnergyController::
 Route::get('/game/{game_id}/research-tasks/completed', [ResearchTaskController::class, 'showCompletedTasks'])->name('research-tasks-completed');
 Route::post('/game/{game_id}/research-tasks/complete/{taskId}', [ResearchTaskController::class, 'completeResearch']);
 Route::get('/game/{game_id}/research-tasks/completed-automation', [ResearchTaskController::class, 'showCompletedAutomationTasks'])->name('research-tasks.automation.completed');
-
+Route::post('/game/{game_id}/update-assignments', [RefineryController::class, 'updateAssignments'])->name('update-assignments');
+Route::get('/game/{game_id}/getMessageLog', [MessageLog::class, 'addMessage']);
+Route::post('/game/{game_id}/clearMessageLog', [MessageLog::class, 'clearAll']);
 
 Route::get('game/{game_id}/tank/{tank_id}', [TankController::class, 'getValues']);
 Route::get('game/{game_id}/production-data', [ProductionDataController::class, 'index']);

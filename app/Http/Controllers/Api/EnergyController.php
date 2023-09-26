@@ -16,7 +16,7 @@ class EnergyController extends Controller
     {
         try {
 
-            $energyType = $request->input('type'); // 'solar', 'wind', or 'gas'
+            $energyType = $request->input('type'); 
 
             // Retrieve the energy details from the database
             $energy = Power::where('type', $energyType)->first();

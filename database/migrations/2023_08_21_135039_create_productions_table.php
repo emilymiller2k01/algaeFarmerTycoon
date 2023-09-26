@@ -15,19 +15,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('game_id');
             $table->foreign('game_id')->references('id')->on('games')->onDelete('cascade');
-            $table->decimal('currentMoney')->default(1000);
-            $table->float('moneyRate')->default(0.0);
-            $table->float('algaeMass')->default(0.0);
-            $table->float('algaeRate')->default(0.0);
-            $table->integer('tanks')->default(1);
-            $table->integer('maxTanks')->default(8);
-            $table->integer('farms')->default(1);
-            $table->float('nutrientPerc')->default(100);
-            $table->float('nutrientsRate')->default(0);
-            $table->float('co2Amount')->default(100);
-            $table->float('co2Rate')->default(0);
-            $table->float('temp')->default(25);
-            $table->float('farmLight');
+            $table->decimal('co2_cost')->default(50);
+            $table->decimal('nutrient_cost')->default(50);
+            $table->decimal('algae_cost')->default(100);
+            $table->decimal('gr_multiplier')->default(1);
             $table->timestamps();
         });
     }

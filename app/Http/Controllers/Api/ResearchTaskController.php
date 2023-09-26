@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ResearchTasks;
 use Illuminate\Http\Request;
 use App\Models\Game;
+use App\Models\Byproducts;
 
 
 class ResearchTaskController extends Controller
@@ -27,7 +28,7 @@ class ResearchTaskController extends Controller
       
         
         if ($task->completed) {
-            return response()->json(['message' => 'Research task already completed']);
+            return;
         }
 
 
@@ -124,7 +125,8 @@ class ResearchTaskController extends Controller
             $game->decrement('money', $task->cost);
             $game->save();
 
-            $farms = $this->farms()->with('tanks')->get();
+            $farms = $game->farms;
+
             foreach ($farms as $farm) {
                 foreach ($farm->tanks as $tank) {
                     
@@ -157,20 +159,17 @@ class ResearchTaskController extends Controller
 
     public function completedBubbleTechnology(Game $game, ResearchTasks $task)
     {
-        //co2 cost reduces to 1£ per 1% 
         // increases biomass production by 7.5%
-        //add pH to production screen 
-        // ad controls for controlling the bubble rate - more bubbles ph reduces, less bubbles ph increses 
-        // multiply the biomass output by 7.5% if this has been reserched 
+        $production = $game->production;
+        $production->gr_multiplier = 1.15;
+        $production->save();
+
         try{if ($game->money >= $task->cost && $game->mw >= $task->mw ){
             $task->completed = true;
             $task->save();
             $game->decrement('money', $task->cost);
             $game->decrement('mw', $task->mw);
             $game->save();
-            //todo change this so it controls the pH increasing production
-            //reduce the cost of co2 adding 
-            // add ph to the production screen 
         }}catch (ModelNotFoundException $e){
             return response("Game Not Found", 404);
         } catch (Exception $e){
@@ -203,7 +202,11 @@ class ResearchTaskController extends Controller
     {
         //more accurate readings of the co2, nutrients reducing the cost of maintainence 
         // co2 and nutrient cost reduces by 15% 
+        $production = $game->production;
+
         try{if ($game->money >= $task->cost){
+            $production->co2_cost = $production->co2_cost * 0.85;
+            $production->nutrient_cost = $production->nutrient_cost * 0.85;
             $task->completed = true;
             $task->save();
             $game->decrement('money', $task->cost);
@@ -218,11 +221,7 @@ class ResearchTaskController extends Controller
 
     public function completedAlgaeByProducts(Game $game, ResearchTasks $task)
     {
-        //add refineries management to the main screen 
-        //add the settings icon to the refienries tab and then load a popup which allows you to assign refineries to make that product 
-        //add the different products of algae to make 
-        //send all the harvested algae to the refineries 
-        
+             
         try{if ($game->money >= $task->cost){
             $task->completed = true;
             $task->save();

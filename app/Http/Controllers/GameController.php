@@ -14,6 +14,8 @@ use App\Helpers\getProductionData;
 use App\Models\ResearchTasks;
 use App\Events\ProductionDataUpdated;
 use Illuminate\Support\Facades\Artisan;
+use App\Models\Production;
+use App\Models\Byproducts;
 
 
 class GameController extends Controller
@@ -164,10 +166,8 @@ class GameController extends Controller
 // Access the lux property of the selected farm
         $luxValue = $selectedFarm->lux;
 
-        
-        $game->production()->create([
-            'farmLight' => $luxValue,
-        ]);
+        $production = new Production;
+        $production->game_id = $game->id;
 
         foreach ($researchTasks as $taskData) {
             $researchTask = new ResearchTasks;
@@ -176,10 +176,16 @@ class GameController extends Controller
             $researchTask->save();
         }
 
+        $byproducts = new Byproducts;
+        $byproducts->game_id = $game->id;
+
+        $byproducts->save();
+
+        $production->save();
+
         $farm->save();
         
         $game->save();
-    
         // Return a response or redirect
         return redirect()->route('games.show', ['game' => $game->id]);
     }
@@ -187,6 +193,7 @@ class GameController extends Controller
     //show a game
     public function show(Game $game)
     {
+        dd("James like lesbians");
         $this->authorize('view', $game);
         $refineries = [];
         $powers = [];
@@ -198,6 +205,8 @@ class GameController extends Controller
         // Call the helper function to get production data
         $productionData = getProductionData($game);
 
+        dd($game->byproducts);
+
         return Inertia::render('Game', [
             'initialGame' => $game,
             'tanks' => $game->selectedFarm ? $game->selectedFarm->tanks : [],
@@ -206,6 +215,7 @@ class GameController extends Controller
             'researchTasks' => $game->researchTasks,
             'refineries' => $refineries,
             'powers' => $powers,
+            'byProductAssignments' => $game->byproducts,
         ]);
 
     }

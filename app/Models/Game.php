@@ -57,5 +57,10 @@ class Game extends Model
         });
     }
 
+    public function byproducts()
+    {
+        return $this->hasOne(Byproducts::class);
+    }
+
 
 }

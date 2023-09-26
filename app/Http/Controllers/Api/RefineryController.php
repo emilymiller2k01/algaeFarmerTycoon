@@ -10,21 +10,34 @@ use Illuminate\Http\Request;
 
 class RefineryController extends Controller
 {
-    public function updateRefineryProduct(Request $request, $refinery_id, $farm_id, $game_id) {
+    public function updateAssignments(Request $request, $gameId){
         try {
-            $game = Game::findOrFail($game_id);
-            $farm = $game->farms->where('id', $farm_id)->first();
-            $refinery = $farm->refineries()->where('id', $refinery_id)->first();
+        
+            $game = Game::findOrFail($gameId);
 
-            $product = $request->input('produce');
-            $refinery->produce = $product;
-            $refinery->save();
+            // Get the updated byproduct assignments from the request
+            $assignments = $request->input('assignments');
 
-            return response()->json(['message' => 'Refinery updated successfully']);
-        } catch (ModelNotFoundException $e) {
+            // Update the byproduct assignments for the game
+            $byProducts = $game->byproducts;
+
+            dd($assignments);
+            
+            // Update the assignments
+            $byProducts->update([
+                'game_id' => $gameId,
+                'biofuel' => $assignments['biofuel'],
+                'antioxidants' => $assignments['antioxidants'],
+                'food' => $assignments['food'],
+                'fertiliser' => $assignments['fertiliser'],
+            ]);
+            
+            // Save the changes to the database
+            $byProducts->save();
+        } catch (ModelNotFoundException $e){
             return response("Game Not Found", 404);
         } catch (Exception $e){
-            return response('Internal Server Error', 500);
+            return response($e, 500);
         }
     }
 }

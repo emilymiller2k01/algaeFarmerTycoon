@@ -11,14 +11,6 @@ const FarmSection = ({updateSelectedFarm }) => {
     //const [selectedFarm] = useState([]);
     console.log(farms)
 
-    // const handleFarmChange = (newFarmId) => {
-    //     router.post(`/game/${game.id}/selectFarm`, { farm_id: newFarmId }, {
-    //         onSuccess: () => {
-    //             router.reload({ only: ['MultiSection'] });
-    //         }
-    //     });
-    // }
-
     const handleFarmChange = (newFarmId) => {
         router.post(`/game/${initialGame.id}/selectFarm`, { farm_id: newFarmId }, {
             onSuccess: () => {

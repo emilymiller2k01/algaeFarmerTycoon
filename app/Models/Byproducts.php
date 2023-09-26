@@ -5,19 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Production extends Model
+class Byproducts extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'game_id',
-        'co2_cost',
-        'nutrient_cost',
-        'algae_cost',
-        'gr_multiplier',
+        'game_id', 
+        'biofuel',
+        'antioxidants',
+        'food',
+        'fertiliser',
     ];
 
-    public function game(){
+    // Define an inverse one-to-one relationship with Game
+    public function game()
+    {
         return $this->belongsTo(Game::class);
     }
 }

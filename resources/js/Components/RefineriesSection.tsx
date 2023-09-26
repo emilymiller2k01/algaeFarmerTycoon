@@ -23,6 +23,8 @@ const RefineriesSection = () => {
         setPopupOpen(!isPopupOpen);
     }
 
+    
+
 
     return (
         <div className="px-4 pb-4 pt-2 border-2 border-green-dark rounded-[10px] bg-transparent">

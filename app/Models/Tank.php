@@ -28,8 +28,10 @@ class Tank extends Model
     {
         // Access the associated farm to get lux and temperature values
         $farm = Farm::findOrFail($this->farm_id);
+        $game = $farm->game;
+        $production = $game->production;
         //calculate temp growth rate 
-        $temp_gr = (1 - (($farm->temo -25)^2)/7) *(exp(1))^(0.001*$farm->temp);
+        $temp_gr = (1 - (($farm->temp -25)^2)/7) *(exp(1))^(0.001*$farm->temp);
         //calculate nutrient growth rate 
         $nutrient_gr = ($this->nutrient_level)/((($this->nutrient_level)^2)*0.5 + ($this->nutrient_level) + 0.5);
         //calculate co2 growth rate 
@@ -37,7 +39,7 @@ class Tank extends Model
         //calculate light growth rate 
         $light_gr = (0.9*($farm->lux)/100)/(0.5 + ($farm->lux)/100);
         //calculating average growth rate 
-        $gr = ($temp_gr + $nutrient_gr + $co2_gr + $light_gr)/4;
+        $gr = ($production->gr_multiplier * ($temp_gr + $nutrient_gr + $co2_gr + $light_gr))/4;
         //calculating capacity 
         $b_1 = $gr * $this->biomass *(($this->capacity - $this->biomass)/$this->capacity);
         $algaeProductionRate = ((($b_1 - $this->biomass)/$b_1)*100);

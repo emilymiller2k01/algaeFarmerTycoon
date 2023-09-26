@@ -22,9 +22,6 @@ class Expansions extends Controller
 
             $farms = $game->farms;
 
-            //$game->save();
-
-            dd($game);
         }
         catch (ModelNotFoundException $e){
             return response("Game Not Found", 404);
@@ -130,6 +127,9 @@ class Expansions extends Controller
             $game->farms()->save($newFarm);
             $game->selected_farm_id = $newFarm->id;
 
+            $message = "You just added a new farm!";
+            addMessageToLog($game_id, $message, 'Add Farm');
+
 
         } catch (ModelNotFoundException $e){
             return response("Game Not Found", 404);
@@ -143,9 +143,10 @@ class Expansions extends Controller
             // Fetch the farm and game by their IDs.
             $farm = Farm::findOrFail($farm_id);
             $game = Game::findOrFail($game_id);
+            $production = $game->production;
 
             // Define cost to maximize nutrients for a tank
-            $nutrientCost = 50; // Example value
+            $nutrientCost = $production->nutrient_cost; // Example value
 
             // Fetch all tanks associated with the farm.
             $tanks = $farm->tanks;
@@ -186,9 +187,10 @@ class Expansions extends Controller
             // Fetch the farm and game by their IDs.
             $farm = Farm::findOrFail($farm_id);
             $game = Game::findOrFail($game_id);
+            $production = $game->production;
 
             // Define cost to maximize CO2 for a tank.
-            $co2Cost = 50; // Example value
+            $co2Cost = $production->co2_cost; // Example value
             // Fetch all tanks associated with the farm.
             $tanks = $farm->tanks;
 
@@ -273,6 +275,8 @@ class Expansions extends Controller
         try{
             $farm = Farm::findOrFail($farm_id);
             $tanks = $farm->tanks;
+            $game = $farm->game;
+            $production = $game->production;
 
             $totalHarvestedAlgae = 0;
             $totalEarned = 0;
@@ -284,13 +288,12 @@ class Expansions extends Controller
                     $totalHarvestedAlgae += $harvestedAlgae;
                     // Convert grams to kilograms and calculate earnings
                     $harvestedAlgaeInKg = $harvestedAlgae / 1000;
-                    $totalEarned += $harvestedAlgaeInKg * 70; // £70 per kg
+                    $totalEarned += $harvestedAlgaeInKg * $production->algae_cost; 
                 }
                 $tank->save();
             }
 
             // Add earnings to game money
-            $game = $farm->game;
             $game->money += $totalEarned;
 
             $farm->save();
@@ -371,6 +374,16 @@ class Expansions extends Controller
                 'status' => 500
             ]);
         }
+    }
+
+    private function addMessageToLog($game_id, $message, $action) {
+        // Create a new message log entry
+        $messageLog = new MessageLog;
+        $messageLog->text = $message;
+        $messageLog->action = $action; // Specify the action
+        $messageLog->cleared = 0; // Message is not cleared
+        $messageLog->game()->associate(Game::find($game_id)); // Associate the message with the game
+        $messageLog->save();
     }
 
 }

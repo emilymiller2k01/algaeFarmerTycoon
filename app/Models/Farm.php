@@ -92,4 +92,15 @@ class Farm extends Model
         });
     }
 
+    public function getLightCounts()
+    {
+        $ledCount = $this->lights()->where('type', 'LED')->count();
+        $fluorescentCount = $this->lights()->where('type', 'Fluorescent')->count();
+
+        return [
+            'led_count' => $ledCount,
+            'fluorescent_count' => $fluorescentCount,
+        ];
+    }
+
 }

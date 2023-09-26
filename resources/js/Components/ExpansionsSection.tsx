@@ -24,7 +24,6 @@ const ExpansionsSection = () => {
     };
 
     const addLight = (lightType: string) => {
-        console.log("light added ", lightType);
         router.post(`/game/${initialGame.id}/farm/${initialGame.selected_farm_id}/light`, {
             lightType: lightType, // assuming the title is the type of light you want to add
         }, {

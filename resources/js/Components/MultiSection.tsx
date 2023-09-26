@@ -51,7 +51,7 @@ const MultiSection = () => {
                     <div className="flex flex-col gap-4 pb-20 px-4 flex-grow overflow-y-auto ">
                         <PowerSection />
                         <TankContext.Provider value={{tanks: tanks}}>
-                            <TankContainer game={initialGame} selectedFarmId={initialGame.selected_farm_id} />
+                            <TankContainer selectedFarmId={initialGame.selected_farm_id} />
                         </TankContext.Provider>
                         <AutomationSection game={initialGame} tasks={automatedTasks} />
                         {isTask10Completed && <RefineriesSection />}

@@ -29,7 +29,7 @@ class AlgaeViewController extends Controller
                 'farm_id' => $farm->id,
                 'tanks' => $farm->tanks()->get(),
                 'refineries' => $farm->refineries()->get(),
-                'lights' => $farm->lights()->get(),
+                'lights' => $farm->getLightCounts(),
                 'powers' => $farm->powers()->get(),
             ];
 

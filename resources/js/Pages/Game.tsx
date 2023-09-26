@@ -35,9 +35,15 @@ export type Refinery = {
     mw: number
 }
 
+export enum LightType{
+    led,
+    florescent,
+}
+
 export type Farm = {
     id: number;
     tanks: Tank[];
+    lights: LightType[];
     mw: number;
 }
 
@@ -78,6 +84,14 @@ export type ResearchTask = {
     mw: number,
 }
 
+export type ByProductAssignments = {
+    id: number;
+    biofuel: number;
+    antioxidants: number;
+    food: number;
+    fertiliser: number;
+}
+
 export type HomeProps = {
     initialGame: GameProps;
     tanks: Tank[];
@@ -86,14 +100,14 @@ export type HomeProps = {
     researchTasks: ResearchTask[];
     refineries: Refinery[];
     powers: Power[];
+    byProductAssignments: ByProductAssignments;
 }
 
 function Home() {
 
-    const {initialGame, tanks, farms, researchTasks, refineries, powers} = usePage<PageProps<HomeProps>>().props;
+    const {initialGame, tanks, farms, researchTasks, refineries, powers, byProductAssignments} = usePage<PageProps<HomeProps>>().props;
 
     const [game, setGame] = useState(initialGame);
-    console.log('refineries', refineries);
 
     // This function will be passed to FarmSection to update the selected_farm_id
     const updateSelectedFarmId = (newId) => {
@@ -101,6 +115,7 @@ function Home() {
        setGame(updatedGame);
     }
 
+    console.log("FACK", byProductAssignments);
     
 
     return (
