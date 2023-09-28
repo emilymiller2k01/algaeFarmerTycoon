@@ -20,8 +20,6 @@ class RefineryController extends Controller
 
             // Update the byproduct assignments for the game
             $byProducts = $game->byproducts;
-
-            dd($assignments);
             
             // Update the assignments
             $byProducts->update([

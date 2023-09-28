@@ -8,6 +8,7 @@ use App\Models\Game;
 use App\Models\Light;
 use App\Models\Refinery;
 use App\Models\Tank;
+use App\Models\MessageLog;
 use Exception;
 use http\Env\Response;
 use Illuminate\Http\Request;
@@ -55,6 +56,9 @@ class Expansions extends Controller
                 // Associate the light with the selected farm
                 $selectedFarm->lights()->attach($selectedLight->id);
 
+                $message = "You just added a new $lightType!";
+                $this->addMessageToLog($game_id, $message);
+
             }
         } catch (ModelNotFoundException $e){
             return response("Game Not Found", 404);
@@ -91,6 +95,8 @@ class Expansions extends Controller
             $farm->refineries()->save($refinery);
 
             //return Inertia::location("/game/$game->id");
+            $message = "You just added a new Refinery!";
+            $this->addMessageToLog($game_id, $message);
 
         } catch (ModelNotFoundException $e) {
             return Inertia::render('Error', [
@@ -128,8 +134,7 @@ class Expansions extends Controller
             $game->selected_farm_id = $newFarm->id;
 
             $message = "You just added a new farm!";
-            addMessageToLog($game_id, $message, 'Add Farm');
-
+            $this->addMessageToLog($game_id, $message);
 
         } catch (ModelNotFoundException $e){
             return response("Game Not Found", 404);
@@ -166,6 +171,8 @@ class Expansions extends Controller
                     $tank->nutrient_level = 100;
                     $tank->save(); // Assuming 100 is the maximum nutrient level
                 });
+                $message = "Nutrients topped up!";
+                $this->addMessageToLog($game_id, $message);
             }
         } catch (ModelNotFoundException $e) {
             return Inertia::render('Error', [
@@ -209,6 +216,8 @@ class Expansions extends Controller
                     $tank->co2_level = 100; 
                     $tank->save();// Assuming 100 is the maximum CO2 level
                 });
+                $message = "CO2 topped up!";
+                $this->addMessageToLog($game_id, $message);
             }
             
 
@@ -253,10 +262,8 @@ class Expansions extends Controller
             }
 
             $updatedTanks = $farm->tanks()->get();
-            //$game->refresh();
-
-            // Render the Inertia view with the updated tanks list
-            //return Inertia::location("/game/$game->id");
+            $message = "You just added a new tank to the farm!";
+            $this->addMessageToLog($game_id, $message);
 
         } catch (ModelNotFoundException $e) {
             return Inertia::render('Error', [
@@ -299,6 +306,9 @@ class Expansions extends Controller
             $farm->save();
             $game->save();
 
+            $message = "Harvested $harvestedAlgaeInKg KGs of algae and earned $$totalEarned";
+            $this->addMessageToLog($game_id, $message);
+
         } catch (ModelNotFoundException $e){
             return Inertia::render('Error', [
                 'message' => 'Resource Not Found',
@@ -329,12 +339,10 @@ class Expansions extends Controller
                 // Deduct the energy cost
                 $game->mw -= $energyCost;
                 $game->save();
+                
+                $message = "Temperature is {$farm->temp}" . html_entity_decode("&#176;") . "C";
+                $this->addMessageToLog($game_id, $message);
 
-            } else {
-                return Inertia::render('Error', [
-                    'message' => 'Not enough energy to increase temperature',
-                    'status' => 400
-                ]);
             }
         } catch (ModelNotFoundException $e){
             return Inertia::render('Error', [
@@ -363,6 +371,9 @@ class Expansions extends Controller
             $game->mw += $energyGain;
             $game->save();
 
+            $message = "Temperature is {$farm->temp}" . html_entity_decode("&#176;") . "C";
+            $this->addMessageToLog($game_id, $message);
+
         } catch (ModelNotFoundException $e) {
             return Inertia::render('Error', [
                 'message' => 'Resource Not Found',
@@ -376,14 +387,9 @@ class Expansions extends Controller
         }
     }
 
-    private function addMessageToLog($game_id, $message, $action) {
-        // Create a new message log entry
-        $messageLog = new MessageLog;
-        $messageLog->text = $message;
-        $messageLog->action = $action; // Specify the action
-        $messageLog->cleared = 0; // Message is not cleared
-        $messageLog->game()->associate(Game::find($game_id)); // Associate the message with the game
-        $messageLog->save();
+    private function addMessageToLog($game_id, $message){
+        $game = Game::find($game_id);
+        $game->addMessageToLog($message);
     }
 
 }

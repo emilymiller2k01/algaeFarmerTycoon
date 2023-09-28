@@ -45,7 +45,7 @@ class Game extends Model
     }
 
     public function messageLog(){
-        return $this->belongsToMany(MessageLog::class, 'game_message_log');
+        return $this->hasMany(MessageLog::class);
     }
 
     public function getFarms(){
@@ -62,5 +62,19 @@ class Game extends Model
         return $this->hasOne(Byproducts::class);
     }
 
+    public function addMessageToLog($message)
+    {
+        // Create a new message log entry
+        $messageLog = new MessageLog([
+            'game_id' => $this->id,
+            'message' => $message,
+            'cleared' => 0, 
+            'action' => null,// Message is not cleared
+        ]);
+
+        $messageLog->save();
+
+        return $messageLog;
+    }
 
 }

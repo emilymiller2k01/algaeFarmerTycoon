@@ -10,12 +10,16 @@ class MessageLog extends Model
     use HasFactory;
 
     protected $fillable = [
+        'game_id',
         'message',
+        'action',
         'cleared',
     ];
 
+    protected $table = 'message_log';
+
     public function games(){
-        return $this->belongsToMany(Game::class, 'game_message_log');
+        return $this->belongsTo(Game::class);
     }
 
     // public function actions(){

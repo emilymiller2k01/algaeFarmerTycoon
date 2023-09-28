@@ -23,29 +23,27 @@ const RefineriesSection = () => {
         setPopupOpen(!isPopupOpen);
     }
 
-    
-
-
     return (
         <div className="px-4 pb-4 pt-2 border-2 border-green-dark rounded-[10px] bg-transparent">
-            <h1 className="text-2xl text-green font-semibold pb-2">
-                Refineries
-            </h1>
-            <div className="flex w-full justify-between">
-                <div className="flex max-w-full flex-wrap gap-y-6 justify-evenly gap-x-4">
-                    {Array.isArray(refineries) && refineries.map(refinery => (
-                        <RefineryComponent key={refinery.id} {...refinery} />
-                    ))}
-                </div>
-                    <Button onClick={() => displayModal()}>
-                        {isAlgaeByProductsCompleted && (
-                            <div className="flex flex-col border-2 border-green-dark rounded-md">
-                                <SettingsSVG className="my-auto mx-3" />
-                            </div>
-                        )}
+            <div className="flex items-center justify-between">
+                <h1 className="text-2xl text-green font-semibold pb-2">
+                    Refineries
+                </h1>
+                {isAlgaeByProductsCompleted && (
+                    <Button
+                        onClick={() => displayModal()}
+                        className="border-2 border-green-dark rounded-md flex flex-col"
+                    >
+                        <SettingsSVG className="my-auto mx-3" />
                     </Button>
-                    {isPopupOpen && <RefineryPopUp show={isPopupOpen} handleClose={displayModal} />}
+                )}
             </div>
+            <div className="flex w-full flex-wrap gap-y-6 justify-evenly gap-x-4">
+                {Array.isArray(refineries) && refineries.map(refinery => (
+                    <RefineryComponent key={refinery.id} {...refinery} />
+                ))}
+            </div>
+            {isPopupOpen && <RefineryPopUp show={isPopupOpen} handleClose={displayModal} />}
         </div>
     );
 };
@@ -59,7 +57,6 @@ const RefineryComponent = ({ id, produce, mw }: Refinery) => {
 };
 
 export default RefineriesSection;
-
 
 type Refinery = {
     id: number;

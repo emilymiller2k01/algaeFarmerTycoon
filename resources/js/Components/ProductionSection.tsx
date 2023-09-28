@@ -52,20 +52,21 @@ const ProductionSection = () => {
                 </h2>
             </div>
             <div className="flex px-8 py-6 bg-grey justify-between font-semibold">
-                <h1 className="text-xl text-green">
-                    
-                </h1>
+            <div className="flex justify-end">
                 <h2 className="text-xl text-green">
-                    Amount 
+                    Amount
                 </h2>
+            </div>
+            <div className="flex justify-end">
                 <h2 className="text-xl text-green">
                     Rate
                 </h2>
             </div>
+            </div>
             <div className="flex justify-between text-xl text-yellow-dark">
                 <p className="">$ Money</p>
-                <p className="">{Number(initialGame.money).toFixed(2)}</p>
-                <p>{Number(data.moneyRate).toFixed(2)}</p>
+                <p className="">${Number(initialGame.money).toFixed(2)}</p>
+                <p>{Number(data.moneyRate).toFixed(2)}/s</p>
             </div>
 
             <div className="flex justify-between text-xl text-green-dark">
@@ -73,10 +74,10 @@ const ProductionSection = () => {
                     <AlgaeSVG className="inline-block -translate-y-[2px] p-[2px]" /> Algae Mass
                 </p>
                 <p className="">
-                    {Number(data.algaeMass || 0).toFixed(2)}
+                    {Number(data.algaeMass || 0).toFixed(2)}Kg
                 </p>
                 <p>
-                    {Number(data.algaeRate || 0).toFixed(2)}
+                    {Number(data.algaeRate || 0).toFixed(2)}g/s
                 </p>
             </div>
             <div className="flex justify-between text-xl text-yellow-dark">
@@ -87,7 +88,7 @@ const ProductionSection = () => {
                     {Number(data.co2Amount || 0).toFixed(2)}%
                 </p>
                 <p>
-                    {Number(data.co2Rate || 0).toFixed(2)}%
+                    {Number(data.co2Rate || 0).toFixed(2)}%/s
                 </p>
             </div>
             <div className="flex justify-between text-xl text-green-dark">
@@ -98,7 +99,7 @@ const ProductionSection = () => {
                     {Number(data.nutrientsAmount).toFixed(2)}%
                 </p>
                 <p className="">
-                    {Number(data.nutrientsRate || 0).toFixed(2)}%
+                    {Number(data.nutrientsRate || 0).toFixed(2)}%/s
                 </p>
 
             </div>
@@ -123,7 +124,7 @@ const ProductionSection = () => {
                     <LightSVG className="inline-block -translate-y-[2px] p-[2px]" /> Lux
                 </p>
                 <p className="">
-                    {data.lux || 0}
+                    {data.lux || 0} lux
                 </p>
             </div>
             <div className="flex justify-between text-xl text-green-dark">
@@ -131,7 +132,7 @@ const ProductionSection = () => {
                     <TempSVG className="inline-block -translate-y-[2px]" /> Temperature
                     </p>
                     <p className="">
-                        {data.temperature}
+                        {data.temperature}&#176;C
                     </p>
                 </div>
         </div>

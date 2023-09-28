@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Modal } from '@mantine/core';
 import { PageProps } from '/home/emily/code/algae/resources/js/types';
 import { HomeProps, ByProductAssignments } from '/home/emily/code/algae/resources/js/Pages/Game';
@@ -23,7 +23,6 @@ const RefineryPopUp = ({ handleClose, show }) => {
     const [assignments, setAssignments] = useState<ByProductAssignments>(initialAssignments);
 
     function handleAssignmentChange(byproduct: string, newAssignments: number) {
-        console.log("FACK")
         const currentAssignments = assignments[byproduct];
 
         if (newAssignments >= 0 && newAssignments <= maxAssignments) {
@@ -32,8 +31,6 @@ const RefineryPopUp = ({ handleClose, show }) => {
             if (totalAssignments - currentAssignments + newAssignments <= maxAssignments) {
                 const updatedAssignments = { ...assignments, [byproduct]: newAssignments };
                 setAssignments(updatedAssignments);
-
-                console.log("wagwan", updatedAssignments);
 
                 router.post(`/game/${initialGame.id}/update-assignments`, {
                     assignments: updatedAssignments,
@@ -46,12 +43,17 @@ const RefineryPopUp = ({ handleClose, show }) => {
         }
     }
 
-    console.log("AHHHH", initialAssignments)
-
     return (
-        <Modal opened={show} onClose={handleClose} size="md" padding="md" withCloseButton>
+        <Modal
+            opened={show}
+            onClose={handleClose}
+            size="md"
+            padding="md"
+            withCloseButton
+            className="popup-modal" // Added a custom class for styling
+        >
             <div className="modal-main">
-                <h2>Number of Available Refineries: {numberRefineries}</h2>
+                <h2 className="text-2xl text-center text-green mb-4">Number of Available Refineries: {numberRefineries}</h2> {/* Changed text-4xl to text-3xl */}
                 <div className="assignment-column">
                     {Object.keys(initialAssignments).map((byproduct) => (
                         <AssignmentComponent
@@ -63,11 +65,14 @@ const RefineryPopUp = ({ handleClose, show }) => {
                         />
                     ))}
                 </div>
-                <button type="button" onClick={handleClose}>
+                <button
+                    type="button"
+                    onClick={handleClose}
+                    className="text-lg text-green border border-green p-2 rounded-lg mt-4 absolute bottom-4 right-4" // Position the close button
+                >
                     Close
                 </button>
                 {/* Display the assignments */}
-                
             </div>
         </Modal>
     );
@@ -75,26 +80,32 @@ const RefineryPopUp = ({ handleClose, show }) => {
 
 const AssignmentComponent = ({ totalAssignments, byproduct, assignments, onChangeFunc }: AssignmentComponentProps) => {
     const handleIncrement = () => {
-        console.log("INCREMENT", assignments)
         if (assignments < totalAssignments) {
-            console.log("BALLS")
             onChangeFunc(assignments + 1);
         }
     };
 
     const handleDecrement = () => {
-        console.log("DECREMENT")
         if (assignments > 0) {
-            console.log("NO BALLS")
             onChangeFunc(assignments - 1);
         }
     };
 
     return (
-        <div>
-            <button onClick={handleDecrement}>{"<"}</button>
-            {assignments} for {byproduct}
-            <button onClick={handleIncrement}>{">"}</button>
+        <div className="flex items-center justify-center mb-4">
+            <button
+                onClick={handleDecrement}
+                className="text-2xl text-green bg-white border border-green px-2 py-1 rounded-full" // Styled the arrows
+            >
+                {"<"}
+            </button>
+            <span className="text-lg text-green mx-2">{assignments} for {byproduct}</span>
+            <button
+                onClick={handleIncrement}
+                className="text-2xl text-green bg-white border border-green px-2 py-1 rounded-full" // Styled the arrows
+            >
+                {">"}
+            </button>
         </div>
     );
 };

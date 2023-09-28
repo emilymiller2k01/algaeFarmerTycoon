@@ -14,8 +14,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        // ... Other Artisan commands
-        UpdateProductionData::class, // Register the custom command
+        
     ];
 
     /**
@@ -26,10 +25,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // Add your other scheduled tasks here, if any
-
-        // Schedule the custom command to run every minute (adjust the frequency as needed)
-        $schedule->command('update:production-data {game_id}')->everySecond();
+        
     }
 
     /**

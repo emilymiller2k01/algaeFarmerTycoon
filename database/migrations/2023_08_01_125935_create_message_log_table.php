@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('game_message_logs', function (Blueprint $table) {
+        Schema::create('message_log', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('game_id')->references('id')->on('games');
-            $table->foreignId('message_id')->references('id')->on('message_logs');
+            $table->text('message')->nullable(); // Change this to 'text' for storing longer messages
+            $table->string('action')->nullable(); // Add an 'action' column
+            $table->boolean('cleared')->default(false); // Add a 'cleared' column with a default value of false
             $table->timestamps();
         });
     }
@@ -23,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('game_message_logs');
+        Schema::dropIfExists('message_log');
     }
 };

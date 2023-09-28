@@ -45,15 +45,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
     // Game
-    //Route::get('/game', function () {
-    //    return Inertia::render('Game', [
-    //        'canLogin' => Route::has('login'),
-    //        'canRegister' => Route::has('register'),
-    //        'laravelVersion' => Application::VERSION,
-    //        'phpVersion' => PHP_VERSION,
-    //    ]);
-    //});
-    //Route::get('/game/{game}', [GameController::class, 'show'])->name('games.show'); // Show a specific game
+    Route::get('/game/{game}', [GameController::class, 'show'])->name('games.show'); // Show a specific game
+    Route::get('/game', function () {
+        return Inertia::render('Game', [
+            'canLogin' => Route::has('login'),
+            'canRegister' => Route::has('register'),
+            'laravelVersion' => Application::VERSION,
+            'phpVersion' => PHP_VERSION,
+        ]);
+    });
     Route::get('/game', [GameController::class, 'create']); // Display a form to create a new game
     Route::post('/game', [GameController::class, 'store']); // Create a new game
 

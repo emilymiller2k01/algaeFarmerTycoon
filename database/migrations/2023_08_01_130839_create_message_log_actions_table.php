@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('message_log_actions', function (Blueprint $table) {
             $table->foreignId('action_id')->references('id')->on('actions');
-            $table->foreignId('message_id')->references('id')->on('message_logs');
+            $table->foreignId('message_id')->references('id')->on('message_log');
             $table->timestamps();
         });
     }

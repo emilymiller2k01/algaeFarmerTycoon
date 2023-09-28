@@ -16,6 +16,7 @@ use App\Events\ProductionDataUpdated;
 use Illuminate\Support\Facades\Artisan;
 use App\Models\Production;
 use App\Models\Byproducts;
+use App\Models\MessageLog;
 
 
 class GameController extends Controller
@@ -179,6 +180,14 @@ class GameController extends Controller
         $byproducts = new Byproducts;
         $byproducts->game_id = $game->id;
 
+        $messageLog = new MessageLog([
+            'game_id' =>  $game->id, 
+            'message' => 'Welcome to the game!',
+            'cleared' => 0,
+        ]);
+
+        $messageLog->save();
+
         $byproducts->save();
 
         $production->save();
@@ -193,19 +202,18 @@ class GameController extends Controller
     //show a game
     public function show(Game $game)
     {
-        dd("James like lesbians");
         $this->authorize('view', $game);
         $refineries = [];
         $powers = [];
+        $lights = [];
         foreach ($game->farms as $farm) {
             $refineries = array_merge($refineries, $farm->refineries->toArray());
             $powers = array_merge($powers, $farm->powers->toArray());
+            $lights = array_merge($lights, $farm->lights->toArray());
         }
         
         // Call the helper function to get production data
         $productionData = getProductionData($game);
-
-        dd($game->byproducts);
 
         return Inertia::render('Game', [
             'initialGame' => $game,
@@ -215,7 +223,9 @@ class GameController extends Controller
             'researchTasks' => $game->researchTasks,
             'refineries' => $refineries,
             'powers' => $powers,
+            'lights' => $lights,
             'byProductAssignments' => $game->byproducts,
+            'messageLog' => $game->messageLog,
         ]);
 
     }

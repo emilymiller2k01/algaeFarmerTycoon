@@ -5,7 +5,7 @@ import FarmsSection from '../Components/FarmsSection';
 import LogSection from '../Components/LogSection';
 import MultiSection from '../Components/MultiSection';
 import ProductionSection from '../Components/ProductionSection';
-import { logs, production } from '../data/props';
+import { logs } from '../data/props';
 //import {Tank} from "@/types";
 import { usePage } from '@inertiajs/react';
 import { PageProps, Tank } from '../types';
@@ -35,15 +35,16 @@ export type Refinery = {
     mw: number
 }
 
-export enum LightType{
-    led,
-    florescent,
+export type LightType = "led" | "florescent"
+
+export type Light = {
+    type: LightType,
 }
 
 export type Farm = {
     id: number;
     tanks: Tank[];
-    lights: LightType[];
+    lights: Light[];
     mw: number;
 }
 
@@ -92,6 +93,12 @@ export type ByProductAssignments = {
     fertiliser: number;
 }
 
+export type Message = {
+    id: number,
+    message: string,
+    action: string,
+}
+
 export type HomeProps = {
     initialGame: GameProps;
     tanks: Tank[];
@@ -100,7 +107,9 @@ export type HomeProps = {
     researchTasks: ResearchTask[];
     refineries: Refinery[];
     powers: Power[];
+    lights: Light[];
     byProductAssignments: ByProductAssignments;
+    messageLog: Message[];
 }
 
 function Home() {
@@ -114,8 +123,6 @@ function Home() {
        const updatedGame = { ...game, selected_farm_id: newId };
        setGame(updatedGame);
     }
-
-    console.log("FACK", byProductAssignments);
     
 
     return (
@@ -126,7 +133,7 @@ function Home() {
                         <ProductionSection />
                     </div>
                     <div className="h-[40vh]">
-                        <LogSection {...logs} />
+                        <LogSection />
                     </div>
                 </div>
                 <div className="flex flex-col w-1/2 h-full border-x-2 border-x-green">
