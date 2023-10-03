@@ -25,7 +25,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        
+        $schedule->command('biomass:check {tanks}')->everyMinute();  
+        $schedule->command('tank:check-nutrients {tanks}')->everyMinute();
+        $schedule->command('tank:check-co2 {tanks}')->everyMinute();
     }
 
     /**

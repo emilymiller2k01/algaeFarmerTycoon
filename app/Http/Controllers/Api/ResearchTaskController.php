@@ -7,6 +7,7 @@ use App\Models\ResearchTasks;
 use Illuminate\Http\Request;
 use App\Models\Game;
 use App\Models\Byproducts;
+use Illuminate\Support\Facades\Artisan;
 
 
 class ResearchTaskController extends Controller
@@ -35,7 +36,7 @@ class ResearchTaskController extends Controller
         // Call corresponding functions based on task ID
         switch ($task['title']) {
             case 'Automated Harvesting System':
-                $this->completeAutomatedHarvestingSystem($game, $task);
+                $this->completeAutomatedHarvesting($game, $task);
                 break;
             case 'Automated Nutrient Management':
                 $this->completedAutomatedNutrientManagement($game, $task);
@@ -66,20 +67,26 @@ class ResearchTaskController extends Controller
 
     public function completeAutomatedHarvesting(Game $game, ResearchTasks $task)
     {
-        // need to be constantly be checking when any tank gets over 90% of its capacity 
-        // if tank capacity is more than or equal to 90% remove algae leaving 10% in the tank 
-        // for each 1% of algae is equal to 100g of biomass 
-        // each kg of algae equals £30 
-        // add money to the game 
-        // remove the total biomass from the games biomass 
+        $tanks = [];
+        $farms = $game->farms;
+        foreach ($farms as $farm){
+            $ts = ($farm->tanks);
+            $tanks = array_merge($tanks, $ts->all());
+        }
         try{
 
             if ($game->money >= $task->cost && $game->mw >= 0.5){
                 $task->completed = true;
+
+                Artisan::call('biomass:check', [
+                    'tanks' => $tanks,
+                ]);
+
                 $task->save();
                 $game->decrement('money', $tank->cost);
                 $game->save();
-            }
+
+            }            
             else {
 
             }
@@ -101,9 +108,18 @@ class ResearchTaskController extends Controller
         //minus the amount of money needed to perform this from the game 
         // do not run this if there is not enough moeny and when the game has enough money run it again 
         try {
+            $tanks = [];
+            $farms = $game->farms;
+            foreach ($farms as $farm){
+                $ts = ($farm->tanks);
+                $tanks = array_merge($tanks, $ts->all());
+            }
 
             if ($game->money >= $task->cost && $game->mw >= $task->mw){
                 $task->completed = true;
+                Artisan::call('tank:check-nutrients', [
+                    'tanks' => $tanks,
+                ]);
                 $task->save();
                 $game->decrement('money', $task->cost);
                 $game->decrement('mw', $task->mw);
@@ -179,13 +195,17 @@ class ResearchTaskController extends Controller
 
     public function completedCo2Management(Game $game, ResearchTasks $task)
     {
-        //todo how to get this to run automatically 
-        // needs to constantly monitor the co2 in the tanks to see if it gets lower than 90%
-        //max it out to 100% 
-        // calculate total sum of co2 required to amx out all nexessary tanks 
-        // reduct that cost from the game's money 
+        $tanks = [];
+        $farms = $game->farms;
+        foreach ($farms as $farm){
+            $ts = ($farm->tanks);
+            $tanks = array_merge($tanks, $ts->all());
+        }
         try{if ($game->money >= $task->cost && $game->mw >= $task->mw){
             $task->completed = true;
+            Artisan::call('tank:check-co2', [
+                'tanks' => $tanks,
+            ]);
             $task->save();
             $game->decrement('money', $task->cost);
             $game->decrement('mw', $task->mw);

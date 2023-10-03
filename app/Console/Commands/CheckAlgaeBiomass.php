@@ -3,6 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use App\Models\Farm;
+use App\Models\Game;
 
 class CheckAlgaeBiomass extends Command
 {
@@ -11,69 +14,61 @@ class CheckAlgaeBiomass extends Command
      *
      * @var string
      */
-    protected $signature = 'app:check-algae-biomass';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Command description';
+    protected $signature = 'biomass:check {tanks}';
+    protected $description = 'Check algae biomass levels and trigger harvest if necessary';
 
     /**
      * Execute the console command.
      */
     public function handle()
-    {
-        //
+    {  
+        $tanks = $this->argument('tanks');
+        $i = 0;
+        while ($i<12){
+            $i++;
+            foreach ($tanks as $tank) {
+                $this->harvestAlgae($tank);
+            }
+            Log::info('Code is running. Iteration ' . $i);
+            sleep(5);
+        }
     }
 
     private function harvestAlgae($tank)
-{
-    $farm = Farm::find($tank->farm_id);
-    $game = Game::find($farm->game_id);
+    {       
+        $farm = Farm::findOrFail($tank->farm);
+        $game = Game::findOrFail($farm->game);
+        $biomassPercentage = ($tank->biomass / $tank->capacity) * 100;
 
-    // Define the energy cost to perform the harvest
-    $energyCost = 0.5; // Cost in mw
-
-    // Check if the game has enough energy to perform the harvest
-    if ($game->mw >= $energyCost) {
-        $harvestedAlgae = $tank->biomass - ($tank->capacity * 0.1);
-
-        if ($harvestedAlgae > 0) {
+        if ($biomassPercentage > 90) {
             // Begin a database transaction to ensure consistency
-            DB::beginTransaction();
+            //DB::beginTransaction();
 
             try {
-                // Update the tank's biomass and save it
-                $tank->biomass = $tank->capacity * 0.1;
+                // Harvest algae by setting biomass to 10% of capacity
+                $harvested_algae = $tank->biomass - (($tank->biomass) - ($tank->capacity * 0.9));
+
+                $tank->biomass = ($tank->biomass) - ($tank->capacity * 0.9);
                 $tank->save();
 
-                // Calculate the earnings
-                $harvestedAlgaeInKg = $harvestedAlgae / 1000;
-                $totalEarned = $harvestedAlgaeInKg * $game->production->algae_cost;
+                $game->money += ($harvested_algae * 40);
 
-                // Add the earnings to the game's money
-                $game->money += $totalEarned;
-                $game->save();
-
-                // Deduct the energy cost
-                $game->mw -= $energyCost;
                 $game->save();
 
                 // Commit the transaction if everything is successful
-                DB::commit();
+                //DB::commit();
 
-                $message = "Harvested $harvestedAlgaeInKg KGs of algae and earned $$totalEarned";
-                $this->addMessageToLog($game->id, $message);
+                // Log the successful harvest
+                Log::info('Successfully harvested algae in tank ' . $tank->id);
+                Log::info("Bosh");
 
             } catch (\Exception $e) {
                 // Handle any exceptions and rollback the transaction if an error occurs
-                DB::rollBack();
+                //DB::rollBack();
 
-                $this->error('An error occurred during the algae harvest: ' . $e->getMessage());
+                // Log the error
+                Log::error('An error occurred during the algae harvest in tank ' . $tank->id . ': ' . $e->getMessage());
             }
         }
     }
-}
 }

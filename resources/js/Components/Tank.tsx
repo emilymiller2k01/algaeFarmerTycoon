@@ -17,9 +17,7 @@ const TankComponent = ({ id, biomass, co2_level, nutrient_level }: TankProps) =>
       try {
         //get the tank props to reload every second  
         fetch(`/game/${initialGame.id}/tank/${id}`).then((response) => {
-            console.log(response);
             response.json().then(({tank: newData}) => {
-                console.log("newdata", newData);
                 setData(newData);
             })
         });
@@ -33,13 +31,6 @@ const TankComponent = ({ id, biomass, co2_level, nutrient_level }: TankProps) =>
     useEffect(() => {
       start();
     }, [])
-
-    //this only shows when the tank is manually reloaded 
-    console.log(
-        biomass/10,
-        nutrient_level,
-        co2_level,
-    )
 
     return (
         <div className="relative">
@@ -55,9 +46,9 @@ const TankComponent = ({ id, biomass, co2_level, nutrient_level }: TankProps) =>
                         <span className="w-full text-center text-green z-10 absolute left-0">Nutrients</span>
                 </div>
                 <div className="h-full w-full rounded-full border relative overflow-hidden bg-grey-light border-green-dark text-green items-center justify-center">
-                    <div className="h-full bg-yellow absolute left-0 items-center justify-center " style={{ width: `${data.co2_level}%`, padding: '0 5px', borderRadius: '0 5px 5px 0' }}>
+                    <div className="h-full bg-yellow absolute left-0 z-0 " style={{ width: `${data.co2_level}%`, borderRadius: '0 5px 5px 0' }}>
                     </div>
-                    <span className="w-full text-center text-green z-10 absolute left-0">CO2</span>
+                        <span className="w-full text-center text-green z-10 absolute left-0">CO2</span>
                 </div>
             </div>
             <svg width="220" height="135" xmlns="http://www.w3.org/2000/svg">

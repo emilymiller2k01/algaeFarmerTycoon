@@ -19,14 +19,15 @@ const ProductionSection = () => {
 
     const [data, setData] = useState<ProductionData>(productionData);
 
-    console.log(data, initialGame);
+    
 
     const reloadData = async () => {
       try {
         //here need to run get production data helper to reload every second 
         fetch(`/game/${initialGame.id}/production-data`).then((response) => {
-            response.json().then(({productionData: newData}) => {
-                setData(newData);
+            response.json().then(({productionData: data}) => {
+                setData(data);
+                console.log("newData", data);
             })
         });
         

@@ -26,6 +26,8 @@ class Tank extends Model
     // Calculate and update tank metrics
     public function calculateMetrics()
     {
+        $this->nutrient_level = intval($this->nutrient_level);
+        $this->co2_level = intval($this->co2_level);
         // Access the associated farm to get lux and temperature values
         $farm = Farm::findOrFail($this->farm_id);
         $game = $farm->game;
@@ -39,9 +41,9 @@ class Tank extends Model
         //calculate light growth rate 
         $light_gr = (0.9*($farm->lux)/100)/(0.5 + ($farm->lux)/100);
         //calculating average growth rate 
-        $gr = ($production->gr_multiplier * ($temp_gr + $nutrient_gr + $co2_gr + $light_gr))/4;
+        $gr = ($production->gr_multiplier * ($temp_gr + $nutrient_gr + $co2_gr + $light_gr) *(($this->capacity - $this->biomass)/($this->capacity)))/40;
         //calculating capacity 
-        $b_1 = $gr * $this->biomass *(($this->capacity - $this->biomass)/$this->capacity);
+        $b_1 = (1+$gr) * ($this->biomass); //*(($this->capacity - $this->biomass)/($this->capacity));
         $algaeProductionRate = ((($b_1 - $this->biomass)/$b_1)*100);
         $this->biomass = $b_1;
 

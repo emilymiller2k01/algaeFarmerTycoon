@@ -278,7 +278,7 @@ class Expansions extends Controller
         }
     }
 
-    public function harvestFarmAlgae(Request $request, $farm_id){
+    public function harvestFarmAlgae(Request $request, $game_id, $farm_id){
         try{
             $farm = Farm::findOrFail($farm_id);
             $tanks = $farm->tanks;
@@ -287,7 +287,7 @@ class Expansions extends Controller
 
             $totalHarvestedAlgae = 0;
             $totalEarned = 0;
-
+            
             foreach ($tanks as $tank) {
                 $harvestedAlgae = $tank->biomass - ($tank->capacity *0.1);
                 if ($harvestedAlgae > 0){
