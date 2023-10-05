@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Models\Game;
 
 class CheckTankCO2 extends Command
 {
@@ -11,7 +12,7 @@ class CheckTankCO2 extends Command
      *
      * @var string
      */
-    protected $signature = 'tank:check-co2 {tanks}';
+    protected $signature = 'tank:check-co2 {game_id}';
 
     /**
      * The console command description.
@@ -25,18 +26,24 @@ class CheckTankCO2 extends Command
      */
     public function handle()
     {  
-        $tanks = $this->argument('tanks');
+        $gameId = $this->argument('game_id');
+        $game = Game::findOrFail($gameId);
+        
+        $tanks = [];
+        foreach ($game->farms as $farm) {
+            $tanks = array_merge($tanks, ($farm->tanks)->all());
+        }
         $i = 0;
         while ($i<12){
             $i++;
-            foreach ($tanks as $tank) {
-                $this->addCO2($tank);
+            foreach ($tanks as $tank) {//HERE
+                $this->addCO2($tank, $game);
             }
             sleep(5);
         }
     }
 
-    private function addCO2($tank)
+    private function addCO2($tank, $game)
     {
         if ($tank->co2_level < 10) {
             // Begin a database transaction to ensure consistency

@@ -77,4 +77,13 @@ class Game extends Model
         return $messageLog;
     }
 
+    public function getPowers(){
+        $farms = $this->farms;
+        $powers = [];
+        foreach ($farms as $farm){
+            $powers = array_merge($powers,( $farm->powers)->all());
+        }
+        return $powers;
+    }
+
 }

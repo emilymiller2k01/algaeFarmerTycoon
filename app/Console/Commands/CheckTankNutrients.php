@@ -14,7 +14,7 @@ class CheckTankNutrients extends Command
      *
      * @var string
      */
-    protected $signature = 'tank:check-nutrients {tanks}';
+    protected $signature = 'tank:check-nutrients {game_id}';
 
     /**
      * The console command description.
@@ -28,18 +28,24 @@ class CheckTankNutrients extends Command
      */
     public function handle()
     {  
-        $tanks = $this->argument('tanks');
+        $gameId = $this->argument('game_id');
+        $game = Game::findOrFail($gameId);
+        
+        $tanks = [];
+        foreach ($game->farms as $farm) {
+            $tanks = array_merge($tanks, ($farm->tanks)->all());
+        }        
         $i = 0;
         while ($i<12){
             $i++;
-            foreach ($tanks as $tank) {
-                $this->addNutrients($tank);
+            foreach ($tanks as $tank) {//HERE TODO 
+                $this->addNutrients($tank, $game);
             }
             sleep(5);
         }
     }
 
-    private function addNutrients($tank)
+    private function addNutrients($tank, $game)
     {
         if ($tank->nutrient_level < 10) {
             // Begin a database transaction to ensure consistency

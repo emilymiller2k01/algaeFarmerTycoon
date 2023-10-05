@@ -10,6 +10,7 @@ use App\Models\Byproducts;
 use Illuminate\Support\Facades\Artisan;
 
 
+
 class ResearchTaskController extends Controller
 {
 
@@ -74,16 +75,17 @@ class ResearchTaskController extends Controller
             $tanks = array_merge($tanks, $ts->all());
         }
         try{
-
+            
             if ($game->money >= $task->cost && $game->mw >= 0.5){
+                
+                Artisan::call('biomass:check', [
+                    'game_id' => $game->id,
+                ]);
+                
                 $task->completed = true;
 
-                Artisan::call('biomass:check', [
-                    'tanks' => $tanks,
-                ]);
-
                 $task->save();
-                $game->decrement('money', $tank->cost);
+                $game->decrement('money', $task->cost);
                 $game->save();
 
             }            

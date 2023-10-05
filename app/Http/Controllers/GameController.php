@@ -186,6 +186,10 @@ class GameController extends Controller
             'cleared' => 0,
         ]);
 
+        Artisan::call('gas:money', [
+            'game_id' => $game->id,
+        ]);
+
         $messageLog->save();
 
         $byproducts->save();
