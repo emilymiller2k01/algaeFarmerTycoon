@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Game;
+use Illuminate\Support\Facades\Log;
 
 class Events extends Command
 {
@@ -64,17 +65,44 @@ class Events extends Command
             'task' => 'Supply Shortage: Due to unforeseen circumstances, there is a temporary shortage of carbon dioxide for your algae. Prices have increased temporarily.'
         ],
         ];
-        
+        $game_id = $this->argument('game_id');
         $game = Game::findOrFail($game_id);
         $message_log = $game->messageLog;
 
-        $task = rand(1, 9);
+        $t = rand(0, 8);
+        $t = $t+1;
 
-        // get the task message 
+        switch ($t){
+            case 1:
+                $this->task1($game, $events[0]['task']);
+                break;
+            case 2:
+                $this->task2($game, $events[1]['task']);
+                break;
+            case 3:
+                $this->task3($game, $events[2]['task']);
+                break;
+            case 4: 
+                $this->task4($game, $events[3]['task']);
+                break;
+            case 5:
+                $this->task5($game, $events[4]['task']);
+                break;
+            case 6:
+                $this->task6($game, $events[5]['task']);
+                break;
+            case 7:
+                $this->task7($game, $events[6]['task']);
+                break;
+            case 8:
+                $this->task8($game, $events[7]['task']);
+                break;
+            case 9:
+                $this->task9($game, $events[8]['task']);
+                break;
+        }
 
-        // add the task to the message log associated with the game 
-
-        // run the coressponding method 
+        Log::info("task was run " . $t);
 
     }
 
@@ -84,7 +112,7 @@ class Events extends Command
         $farms = $game->farms;
         $game->addMessageToLog($task);
 
-        for ($farms as $farm)
+        foreach ($farms as $farm)
         {
             $farm->temp -= 3;
             $farm->save();
@@ -93,7 +121,7 @@ class Events extends Command
         
         sleep(20);
         $game->mw_cost -= 5;
-        for ($farms as $farm){
+        foreach ($farms as $farm){
             $farm->temp += 3;
             $farm->save();
         }
@@ -103,9 +131,9 @@ class Events extends Command
     public function task2($game, $task){
         $game->mw_cost -= 5;
         $farms = $game->farms;
-        $game->addMessageToLog($task)
+        $game->addMessageToLog($task);
 
-        for ($farms as $farm){
+        foreach ($farms as $farm){
             $farm->temp += 3;
             $farm->save();
         }
@@ -113,7 +141,7 @@ class Events extends Command
         
         sleep(20);
         $game->mw_cost += 5;
-        for ($farms as $farm){
+        foreach ($farms as $farm){
             $farm->temp -= 3;
             $farm->save();
         }
@@ -154,6 +182,40 @@ class Events extends Command
         $prod->algae_cost = $prod->algae_cost / 1.15;
         $prod->save();
         $game->save();
+    }
+
+    public function task6($game, $task){
+        $game->addMessageToLog($task);
+    }
+
+    public function task7($game, $task){
+        $game->addMessageToLog($task);
+    }
+
+    public function task8($game, $task){
+        $game->addMessageToLog($task);
+        $prod = $game->production;
+        $prod->nutrient_cost = 75;
+        $prod->save();
+        $game->save();
+        sleep(20);
+        $prod->nutrient_cost = 50;
+        $prod->save();
+        $game->save();
+
+    }
+
+    public function task9($game, $task){
+        $game->addMessageToLog($task);
+        $prod = $game->production;
+        $prod->co2_cost = 75;
+        $prod->save();
+        $game->save();
+        sleep(20);
+        $prod->co2_cost = 50;
+        $prod->save();
+        $game->save();
+
     }
 
 }

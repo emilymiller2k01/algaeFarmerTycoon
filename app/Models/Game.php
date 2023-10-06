@@ -57,6 +57,16 @@ class Game extends Model
         });
     }
 
+    public function getRefineries(){
+        $farms = $this->farms;
+
+        $refineries = [];
+        foreach ($farms as $farm){
+            $refineries = array_merge($refineries,( $farm->refineries)->all());
+        }
+        return $refineries;
+    }
+
     public function byproducts()
     {
         return $this->hasOne(Byproducts::class);

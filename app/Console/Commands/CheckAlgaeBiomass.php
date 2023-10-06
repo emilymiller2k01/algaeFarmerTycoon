@@ -25,7 +25,6 @@ class CheckAlgaeBiomass extends Command
     {  
         $gameId = $this->argument('game_id');
         $game = Game::findOrFail($gameId);
-        Log::info('game check ' . $gameId);
         
         $tanks = [];
         foreach ($game->farms as $farm) {
@@ -38,7 +37,6 @@ class CheckAlgaeBiomass extends Command
             foreach ($tanks as $tank) { //HERE
                 $this->harvestAlgae($tank, $game);
             }
-            Log::info('Code is running. Iteration ' . $i);
             sleep(5);
         }
     }
@@ -46,8 +44,6 @@ class CheckAlgaeBiomass extends Command
     private function harvestAlgae($tank, $game)
     {    
         $biomassPercentage = ($tank->biomass / $tank->capacity) * 100;
-        Log::info('biomass perc '. $biomassPercentage);
-        Log::info('tank biomass '  . $tank->biomass);
         if ($biomassPercentage > 9) {
             // Begin a database transaction to ensure consistency
             //DB::beginTransaction();

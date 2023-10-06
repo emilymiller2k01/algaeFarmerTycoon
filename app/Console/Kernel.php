@@ -18,8 +18,9 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\CheckAlgaeBiomass::class,
         \App\Console\Commands\CheckTankCO2::class, 
         \App\Console\Commands\CheckTankNutrients::class,
-        \App\Console\Commands\GasMoney::class
-        
+        \App\Console\Commands\GasMoney::class,
+        \App\Console\Commands\Events::class,
+        \App\Console\Commands\RefineryMoney::class,
     ];
 
     /**
@@ -42,6 +43,8 @@ class Kernel extends ConsoleKernel
             $schedule->command('tank:check-nutrients', [$gameId])->everyMinute()->withoutOverlapping();
             $schedule->command('tank:check-co2', [$gameId])->everyMinute()->withoutOverlapping();
             $schedule->command('gas:money', [$gameId])->everyMinute()->withoutOverlapping();
+            $schedule->command('app:events', [$gameId])->everyMinute()->withoutOverlapping();
+            $schedule->command('app:refinery-money', [$gameId])->everyMinute()->withoutOverlapping();
             }
         }
     }

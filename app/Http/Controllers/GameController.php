@@ -190,6 +190,10 @@ class GameController extends Controller
             'game_id' => $game->id,
         ]);
 
+        Artisan::call('app:events', [
+            'game_id' => $game->id,
+        ]);
+
         $messageLog->save();
 
         $byproducts->save();

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('game_id')->references('id')->on('games')->onDelete('cascade');
             $table->decimal('co2_cost')->default(50);
             $table->decimal('nutrient_cost')->default(50);
-            $table->decimal('algae_cost')->default(100);
+            $table->decimal('algae_cost')->default(40);
             $table->decimal('gr_multiplier')->default(1);
             $table->timestamps();
         });

@@ -27,7 +27,6 @@ const ProductionSection = () => {
         fetch(`/game/${initialGame.id}/production-data`).then((response) => {
             response.json().then(({productionData: data}) => {
                 setData(data);
-                console.log("newData", data);
             })
         });
         

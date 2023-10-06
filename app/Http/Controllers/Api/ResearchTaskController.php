@@ -110,17 +110,10 @@ class ResearchTaskController extends Controller
         //minus the amount of money needed to perform this from the game 
         // do not run this if there is not enough moeny and when the game has enough money run it again 
         try {
-            $tanks = [];
-            $farms = $game->farms;
-            foreach ($farms as $farm){
-                $ts = ($farm->tanks);
-                $tanks = array_merge($tanks, $ts->all());
-            }
-
             if ($game->money >= $task->cost && $game->mw >= $task->mw){
                 $task->completed = true;
                 Artisan::call('tank:check-nutrients', [
-                    'tanks' => $tanks,
+                    'game_id' => $game->id,
                 ]);
                 $task->save();
                 $game->decrement('money', $task->cost);
@@ -197,16 +190,10 @@ class ResearchTaskController extends Controller
 
     public function completedCo2Management(Game $game, ResearchTasks $task)
     {
-        $tanks = [];
-        $farms = $game->farms;
-        foreach ($farms as $farm){
-            $ts = ($farm->tanks);
-            $tanks = array_merge($tanks, $ts->all());
-        }
         try{if ($game->money >= $task->cost && $game->mw >= $task->mw){
             $task->completed = true;
             Artisan::call('tank:check-co2', [
-                'tanks' => $tanks,
+                'game_id' => $game->id,
             ]);
             $task->save();
             $game->decrement('money', $task->cost);
@@ -265,6 +252,10 @@ class ResearchTaskController extends Controller
             $task->save();
             $game->decrement('money', $task->cost);
             $game->save();
+            Artisan::call('app:refinery-money', [
+                'game-id' => $game->id,
+            ]);
+
         }}catch (ModelNotFoundException $e){
             return response("Game Not Found", 404);
         } catch (Exception $e){
