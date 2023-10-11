@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('message_log_actions', function (Blueprint $table) {
-            $table->foreignId('action_id')->references('id')->on('actions');
-            $table->foreignId('message_id')->references('id')->on('message_log');
+            $table->foreignId('action_id')->references('id')->on('actions')->onDelete('cascade');
+            $table->foreignId('message_id')->references('id')->on('message_log')->onDelete('cascade');
             $table->timestamps();
         });
     }

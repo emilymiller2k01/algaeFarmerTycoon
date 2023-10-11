@@ -28,8 +28,19 @@ class CheckTankCO2 extends Command
     {  
         $gameId = $this->argument('game_id');
         $game = Game::findOrFail($gameId);
+        $research_tasks = $game->researchTasks;
+
+
+        $targetTask = null;
+        foreach ($researchTasks as $task) {
+            if ($task['title'] === 'CO2 Management System') {
+                $targetTask = $task; // Store the task if it matches the criteria
+                break; // Exit the loop once the task is found
+            }
+        }
         
-        $tanks = [];
+        if ($targetTask['completed'] === true){
+            $tanks = [];
         foreach ($game->farms as $farm) {
             $tanks = array_merge($tanks, ($farm->tanks)->all());
         }
@@ -40,7 +51,7 @@ class CheckTankCO2 extends Command
                 $this->addCO2($tank, $game);
             }
             sleep(5);
-        }
+        }}
     }
 
     private function addCO2($tank, $game)

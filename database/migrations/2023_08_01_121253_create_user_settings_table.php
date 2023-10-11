@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('user_settings', function (Blueprint $table) {
-            $table->foreignId('user_id')->references('id')->on('users');
-            $table->foreignId('settings_id')->references('id')->on('settings');
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('settings_id')->references('id')->on('settings')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Game;
 use App\Models\MessageLog; // Import the MessageLog model
 
 class MessageLogController extends Controller
@@ -40,14 +41,10 @@ class MessageLogController extends Controller
     }
 
 
-    public function clearAll()
+    public function clearAll($game_id)
     {
-        // Clear all uncleared messages
-        MessageLog::where('cleared', 0)->update(['cleared' => 1]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Messages cleared successfully',
-        ]);
+        $game = Game::findOrFail($game_id);
+        MessageLog::where('game_id', $game_id)->where('cleared', 0)->update(['cleared' => 1]);
+        $game->save();       
     }
 }

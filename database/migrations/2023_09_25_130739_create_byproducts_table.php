@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('byproducts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('game_id')->references('id')->on('games'); 
+            $table->foreignId('game_id')->references('id')->on('games')->onDelete('cascade'); 
             $table->integer('biofuel')->default(0);
             $table->integer('antioxidants')->default(0);
             $table->integer('food')->default(0);

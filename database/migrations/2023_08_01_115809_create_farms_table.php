@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('lux')->default(1);
             $table->integer('temp')->default(20);
             $table->float('mw')->default(0);
-            $table->foreignId('game_id')->references('id')->on('games');
+            $table->foreignId('game_id')->references('id')->on('games')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('user_achievements', function (Blueprint $table) {
-            $table->foreignId('user_id')->references('id')->on('users');
-            $table->foreignId('achievement_id')->references('id')->on('achievements');
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('achievement_id')->references('id')->on('achievements')->onDelete('cascade');
             $table->timestamps();
         });
     }

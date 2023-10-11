@@ -30,9 +30,6 @@ const Landing = ({ auth, games }: PageProps<LandingProps>) => {
 
     };
 
-    console.log(games);
-
-
     return (
         <div>
             <h1>Welcome to Our App!</h1>

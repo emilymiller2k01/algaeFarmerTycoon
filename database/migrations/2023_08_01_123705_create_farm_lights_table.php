@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('farm_lights', function (Blueprint $table) {
-            $table->foreignId('farm_id')->references('id')->on('farms');
-            $table->foreignId('light_id')->references('id')->on('lights');
+            $table->foreignId('farm_id')->references('id')->on('farms')->onDelete('cascade');
+            $table->foreignId('light_id')->references('id')->on('lights')->onDelete('cascade');
             $table->timestamps();
         });
     }

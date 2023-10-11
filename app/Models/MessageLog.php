@@ -21,8 +21,4 @@ class MessageLog extends Model
     public function games(){
         return $this->belongsTo(Game::class);
     }
-
-    // public function actions(){
-    //     return $this->belongsToMany(Action::class, 'message_log_actions');
-    // }
 }

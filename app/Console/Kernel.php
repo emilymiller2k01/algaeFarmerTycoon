@@ -43,7 +43,7 @@ class Kernel extends ConsoleKernel
             $schedule->command('tank:check-nutrients', [$gameId])->everyMinute()->withoutOverlapping();
             $schedule->command('tank:check-co2', [$gameId])->everyMinute()->withoutOverlapping();
             $schedule->command('gas:money', [$gameId])->everyMinute()->withoutOverlapping();
-            $schedule->command('app:events', [$gameId])->everyMinute()->withoutOverlapping();
+            $schedule->command('app:events', [$gameId])->everyMinute(1)->withoutOverlapping();
             $schedule->command('app:refinery-money', [$gameId])->everyMinute()->withoutOverlapping();
             }
         }

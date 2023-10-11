@@ -294,8 +294,8 @@ class Expansions extends Controller
                     $tank->biomass = $tank->capacity * 0.1;
                     $totalHarvestedAlgae += $harvestedAlgae;
                     // Convert grams to kilograms and calculate earnings
-                    $harvestedAlgaeInKg = $harvestedAlgae / 1000;
-                    $totalEarned += $harvestedAlgaeInKg * $production->algae_cost; 
+                    $harvestedAlgaeInKg = round($harvestedAlgae / 1000, 2);
+                    $totalEarned += round($harvestedAlgaeInKg * $production->algae_cost, 2);
                 }
                 $tank->save();
             }

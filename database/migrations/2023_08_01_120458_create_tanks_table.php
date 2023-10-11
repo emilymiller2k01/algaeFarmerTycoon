@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tanks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('farm_id')->references('id')->on('farms');
+            $table->foreignId('farm_id')->references('id')->on('farms')->onDelete('cascade');
             $table->float('nutrient_level')->default(100);
             $table->float('co2_level')->default(100);
             $table->float('biomass')->default(1);

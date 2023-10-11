@@ -30,8 +30,20 @@ class CheckTankNutrients extends Command
     {  
         $gameId = $this->argument('game_id');
         $game = Game::findOrFail($gameId);
+
+        $research_tasks = $game->researchTasks;
+
+        $targetTask = null;
+        foreach ($researchTasks as $task) {
+            if ($task['title'] === 'Automated Nutrient Management') {
+                $targetTask = $task; // Store the task if it matches the criteria
+                break; // Exit the loop once the task is found
+            }
+        }
         
-        $tanks = [];
+        if ($targetTask['completed'] === true)
+        {
+            $tanks = [];
         foreach ($game->farms as $farm) {
             $tanks = array_merge($tanks, ($farm->tanks)->all());
         }        
@@ -42,7 +54,7 @@ class CheckTankNutrients extends Command
                 $this->addNutrients($tank, $game);
             }
             sleep(5);
-        }
+        }}
     }
 
     private function addNutrients($tank, $game)

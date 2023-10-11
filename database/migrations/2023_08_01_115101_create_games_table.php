@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('money', 8, 2)->default(1000);
             $table->decimal('mw_cost', 8, 2)->default(10);
             $table->unsignedBigInteger('selected_farm_id')->nullable();
-            $table->foreignId('user_id')->references('id')->on('users');
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -1,8 +1,5 @@
 import React, {useState} from 'react'
 import ExpansionButton from "./ExpansionButton"
-import game, { GameProps } from "../Pages/Game";
-import { InertiaLink } from '@inertiajs/inertia-react'
-import axios from "axios";
 import { HomeProps } from '../Pages/Game'
 import { router, usePage } from '@inertiajs/react'
 

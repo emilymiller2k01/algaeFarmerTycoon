@@ -25,20 +25,31 @@ class CheckAlgaeBiomass extends Command
     {  
         $gameId = $this->argument('game_id');
         $game = Game::findOrFail($gameId);
-        
-        $tanks = [];
-        foreach ($game->farms as $farm) {
-            $tanks = array_merge($tanks,( $farm->tanks)->all());
-        }
-        $i = 0;
-        while ($i<12){
-            $i = $i +1;
+        $research_tasks = $game->researchTasks;
 
-            foreach ($tanks as $tank) { //HERE
-                $this->harvestAlgae($tank, $game);
+        $targetTask = null;
+        foreach ($researchTasks as $task) {
+            if ($task['title'] === 'Automated Harvesting System') {
+                $targetTask = $task; // Store the task if it matches the criteria
+                break; // Exit the loop once the task is found
             }
-            sleep(5);
         }
+
+        if ($targetTask['completed'] === true){
+            $tanks = [];
+            foreach ($game->farms as $farm) {
+                $tanks = array_merge($tanks,( $farm->tanks)->all());
+            }
+            $i = 0;
+            while ($i<12){
+                $i = $i +1;
+    
+                foreach ($tanks as $tank) { //HERE
+                    $this->harvestAlgae($tank, $game);
+                }
+                sleep(5);
+            }
+        }         
     }
     
     private function harvestAlgae($tank, $game)
@@ -50,23 +61,18 @@ class CheckAlgaeBiomass extends Command
 
             try {
                 // Harvest algae by setting biomass to 10% of capacity
-                $harvested_algae = $tank->biomass * 0.9;
+                $harvested_algae = ($tank->biomass * 0.9)/1000;
 
                 $tank->biomass -= $harvested_algae;                
                 $tank->save();
+                $totalEarned = $harvested_algae * 40;
 
-                $game->money += ($harvested_algae * 40);
+                $game->money += $totalEarned;
 
+                $message = "Harvested $harvestedAlgaeInKg KGs of algae and earned $$totalEarned";
+                $game->addMessageToLog($message);
+                
                 $game->save();
-
-                // Commit the transaction if everything is successful
-                //DB::commit();
-
-                // Log the successful harvest
-                Log::info('Successfully harvested algae in tank ' . $tank->id);
-                Log::info('harvested algae' . $harvested_algae);
-                Log::info('Algae Amount' . $tank->biomass);
-
             } catch (\Exception $e) {
                 // Handle any exceptions and rollback the transaction if an error occurs
                 //DB::rollBack();

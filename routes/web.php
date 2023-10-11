@@ -13,6 +13,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ProductionDataController;
 use App\Http\Controllers\Api\TankController;
+use App\Http\Controllers\Api\MessageLogController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -86,10 +87,12 @@ Route::get('/game/{game_id}/research-tasks/completed', [ResearchTaskController::
 Route::post('/game/{game_id}/research-tasks/complete/{taskId}', [ResearchTaskController::class, 'completeResearch']);
 Route::get('/game/{game_id}/research-tasks/completed-automation', [ResearchTaskController::class, 'showCompletedAutomationTasks'])->name('research-tasks.automation.completed');
 Route::post('/game/{game_id}/update-assignments', [RefineryController::class, 'updateAssignments'])->name('update-assignments');
-Route::get('/game/{game_id}/getMessageLog', [MessageLog::class, 'addMessage']);
-Route::post('/game/{game_id}/clearMessageLog', [MessageLog::class, 'clearAll']);
+Route::get('/game/{game_id}/getMessageLog', [MessageLogController::class, 'addMessage']);
+Route::post('/game/{game_id}/clearMessageLog', [MessageLogController::class, 'clearAll']);
 
-Route::get('game/{game_id}/tank/{tank_id}', [TankController::class, 'getValues']);
-Route::get('game/{game_id}/production-data', [ProductionDataController::class, 'index']);
+Route::get('/game/{game_id}/tank/{tank_id}', [TankController::class, 'getValues']);
+Route::get('/game/{game_id}/production-data', [ProductionDataController::class, 'index']);
+Route::delete('/dashboard/removeGame/{game_id}', [GameController::class, 'deleteGame']);
+Route::patch('/game/{game_id}/renameGame', [GameController::class, 'renameGame']);
 
 require __DIR__.'/auth.php';

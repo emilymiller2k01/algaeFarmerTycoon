@@ -8,7 +8,7 @@ import { Head, Link, useForm } from '@inertiajs/react';
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
-        email: '',
+        username: '', 
         password: '',
         password_confirmation: '',
     });
@@ -21,8 +21,10 @@ export default function Register() {
 
     const submit = (e) => {
         e.preventDefault();
-
+    
         post(route('register'));
+
+
     };
 
     return (
@@ -48,20 +50,20 @@ export default function Register() {
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="email" value="Email" />
+                    <InputLabel htmlFor="username" value="Username" /> {/* Change "email" to "username" here too */}
 
                     <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
+                        id="username" // Change "email" to "username" here
+                        type="text" // Change "email" to "text" here
+                        name="username" // Change "email" to "username" here
+                        value={data.username} // Change "email" to "username" here
                         className="mt-1 block w-full"
                         autoComplete="username"
-                        onChange={(e) => setData('email', e.target.value)}
+                        onChange={(e) => setData('username', e.target.value)} // Change "email" to "username" here
                         required
                     />
 
-                    <InputError message={errors.email} className="mt-2" />
+                    <InputError message={errors.username} className="mt-2" /> {/* Change "email" to "username" here */}
                 </div>
 
                 <div className="mt-4">

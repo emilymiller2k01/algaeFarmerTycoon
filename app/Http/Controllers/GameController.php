@@ -21,8 +21,6 @@ use App\Models\MessageLog;
 
 class GameController extends Controller
 {
-
-    
     //display a listing of the resource
     public function index($user_id) {
         $user = User::find($user_id);
@@ -180,27 +178,24 @@ class GameController extends Controller
         $byproducts = new Byproducts;
         $byproducts->game_id = $game->id;
 
-        $messageLog = new MessageLog([
-            'game_id' =>  $game->id, 
-            'message' => 'Welcome to the game!',
-            'cleared' => 0,
-        ]);
-
+        
         Artisan::call('gas:money', [
             'game_id' => $game->id,
         ]);
 
-        Artisan::call('app:events', [
-            'game_id' => $game->id,
-        ]);
-
-        $messageLog->save();
 
         $byproducts->save();
 
         $production->save();
 
         $farm->save();
+
+        $messageLog = new MessageLog([
+            'game_id' =>  $game->id, 
+            'message' => 'Welcome to the game!',
+            'cleared' => 0,
+        ]);
+        $messageLog->save();
         
         $game->save();
         // Return a response or redirect
@@ -223,6 +218,10 @@ class GameController extends Controller
         // Call the helper function to get production data
         $productionData = getProductionData($game);
 
+        Artisan::call('app:events', [
+            'game_id' => $game->id,
+        ]);
+
         return Inertia::render('Game', [
             'initialGame' => $game,
             'tanks' => $game->selectedFarm ? $game->selectedFarm->tanks : [],
@@ -239,8 +238,18 @@ class GameController extends Controller
     }
 
     //show the form for editing the game name
-    public function editName(Game $game){
-        return Inertia::render('Game/Edit', ['game' => $game]);
+    public function renameGame(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'max:255'],
+        ]);
+
+        
+        dd($game->name, "brooooooo");
+        $game->name = $request->input('name');
+        $game->save();
+
+        return Redirect::back();
     }
 
     //update the specific game in storage
@@ -253,14 +262,6 @@ class GameController extends Controller
         return Redirect::back();
     }
 
-    public function removeGame(Game $game){
-
-        $this->authorize('delete', $game);
-        $game->delete();
-
-        return redirect::back();
-    }
-
     private function createAndAssignResearchTasks(Game $game)
     {
        
@@ -271,5 +272,15 @@ class GameController extends Controller
             $researchTask->fill($taskData);
             $researchTask->save();
         }
+    }
+
+    public function deleteGame(String $game_id, Request $request)
+    {
+
+        $game = Game::findOrFail($game_id);
+
+        $game->delete();
+
+        return Redirect::back();
     }
 }

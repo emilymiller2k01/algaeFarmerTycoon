@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('farm_refineries', function (Blueprint $table) {
-            $table->foreignId('farm_id')->references('id')->on('farms');
-            $table->foreignId('refinery_id')->references('id')->on('refineries');
+            $table->foreignId('farm_id')->references('id')->on('farms')->onDelete('cascade');
+            $table->foreignId('refinery_id')->references('id')->on('refineries')->onDelete('cascade');
             $table->timestamps();
         });
     }

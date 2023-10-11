@@ -7,10 +7,6 @@ const FarmSection = ({updateSelectedFarm }) => {
 
     const { productionData, initialGame, farms } = usePage<HomeProps>().props
 
-
-    //const [selectedFarm] = useState([]);
-    console.log(farms)
-
     const handleFarmChange = (newFarmId) => {
         router.post(`/game/${initialGame.id}/selectFarm`, { farm_id: newFarmId }, {
             onSuccess: () => {

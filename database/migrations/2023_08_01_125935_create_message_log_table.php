@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('message_log', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('game_id')->references('id')->on('games');
+            $table->foreignId('game_id')->references('id')->on('games')->onDelete('cascade');
             $table->text('message')->nullable(); // Change this to 'text' for storing longer messages
             $table->string('action')->nullable(); // Add an 'action' column
             $table->boolean('cleared')->default(false); // Add a 'cleared' column with a default value of false

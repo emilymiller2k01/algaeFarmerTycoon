@@ -253,7 +253,7 @@ class ResearchTaskController extends Controller
             $game->decrement('money', $task->cost);
             $game->save();
             Artisan::call('app:refinery-money', [
-                'game-id' => $game->id,
+                'game_id' => $game->id,
             ]);
 
         }}catch (ModelNotFoundException $e){

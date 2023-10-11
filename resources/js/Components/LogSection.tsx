@@ -1,9 +1,9 @@
-import { usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import React, { useEffect, useRef } from 'react';
 import { HomeProps } from '../Pages/Game';
 
 const LogSection = () => {
-  const { messageLog } = usePage<HomeProps>().props;
+  const { messageLog, initialGame } = usePage<HomeProps>().props;
   const messagesEndRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -19,11 +19,26 @@ const LogSection = () => {
     containerRef.current.scrollTop = 0;
   };
 
+  const handleClearClick = async () => {
+    try {
+      // Send a POST request to clear the message log
+      router.post(`/game/${initialGame.id}/clearMessageLog`);
+      // Optionally, you can fetch the updated message log after clearing
+      // and update the state to reflect the changes
+      // ...
+
+    } catch (error) {
+      console.error("Failed to clear the message log", error);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="flex px-8 py-6 bg-grey justify-between font-semibold">
         <h1 className="text-2xl text-green">Message Log</h1>
-        <h2 className="text-2xl text-green-dark">Clear</h2>
+        {/* <h2 className="text-2xl text-green-dark" onClick={handleClearClick}>
+          Clear
+        </h2> */}
       </div>
       <div
         ref={containerRef}
